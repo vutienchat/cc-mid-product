@@ -1,0 +1,24 @@
+<aura:component controller="R1_HanderClockOutForShiftLeader" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="isShowWarning" type="boolean" default="false"/>
+    <aura:attribute name="extensionNumber" type="String"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    
+    <aura:if isTrue="{!v.isShowWarning}">
+        <ui:message title="Thông báo" severity="error" closable="true">
+            Thông tin đăng nhập chưa chính xác. Vui lòng đăng nhập tổng đài và lựa chọn đúng số bàn {!v.extensionNumber} của bạn
+        </ui:message>
+        
+        <div style="margin-top:20px; text-align:center;font-weight: 700;">
+            <a style ="text-decoration: underline;color:#8A226F; margin-top:20px" href="https://frontstage.apac-ancontact.com/ccaastri2/" target = '_blank'>Đường dẫn đăng nhập tổng đài</a>
+        </div>          
+        <aura:set attribute="else">
+            <ui:message title="Thành công" severity="confirm" closable="true">
+                Kết thúc ca trực thành công
+            </ui:message>
+        </aura:set>
+    </aura:if>
+
+</aura:component>

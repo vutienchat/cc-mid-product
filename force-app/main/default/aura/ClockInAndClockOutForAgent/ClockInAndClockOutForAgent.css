@@ -1,0 +1,12 @@
+.THIS .btn-clockin{
+    color: #F5F5F5;
+    background-color:#14AE5C;
+}
+.THIS .btn-clockin-disable {
+    background-color:#E3E3E3;
+    color: #1E1E1E;
+}
+.THIS .btn-clockout {
+    color: #F5F5F5;
+    background-color:#EC221F;
+}

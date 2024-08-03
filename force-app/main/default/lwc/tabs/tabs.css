@@ -1,0 +1,9 @@
+:host{
+    display: flex;
+    height: 100%;
+}
+
+.tabs-wrapper{
+    display: grid;
+    grid-template-rows: auto 1fr;
+}

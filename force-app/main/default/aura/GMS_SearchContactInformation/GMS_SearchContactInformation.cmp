@@ -1,0 +1,781 @@
+<aura:component controller="GMS_SearchContactInfoController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:attribute name="isModelBoxOpen" type="boolean" default="false"/>
+    <aura:attribute name="isModelBoxOpenHistory" type="boolean" default="false"/>
+    <aura:attribute name="isModelBoxOpenARPU" type="boolean" default="false"/>
+    <aura:attribute name="isModelBoxOpenHotLine" type="boolean" default="false"/>
+    <aura:attribute name="openModelServicePackage" type="boolean" default="false"/>
+    <aura:attribute name="openModelCSDLQG" type="boolean" default="false"/>
+    <aura:attribute name="openModelChanCat" type="boolean" default="false"/>
+    <aura:attribute name="openModelReflectingComplaints" type="boolean" default="false"/>
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" />
+    <aura:attribute name="valueStatus" type="list"/>
+    <aura:attribute name="contact" type="contact"/> 
+    <aura:attribute name="recordId" type="String" /> 
+    <aura:attribute name="spinner" type="boolean" default="false"/>
+    <aura:attribute name="spinner2" type="boolean" default="false"/>
+     <aura:attribute name="spinner3" type="boolean" default="false"/>
+    <aura:attribute name="contactInformation" type="Object"/>
+    
+    <aura:attribute name="checkProfile" type="boolean" default="true"/>
+     
+    <aura:attribute name="missingPhone" type="boolean" />  
+    <aura:attribute name="missingStatus" type="boolean" />
+    <aura:attribute name="missingFromDate" type="boolean" />
+    <aura:attribute name="missingToDate" type="boolean" />
+    <aura:attribute name="missingUnit" type="boolean" />
+        
+    <aura:attribute name="contactPhone" type="String" />
+    <aura:attribute name="fromdate" type="Date" />
+    <aura:attribute name="todate" type="Date" />
+    <aura:attribute name="status" type="String" />
+    
+     <aura:attribute name="selectedLookUpRecord" type="sObject" default="{}"/>
+    <aura:attribute name="objContact" type="contact" default="{'sobjectType':'contact'}"/>
+    
+    <aura:attribute name="dataReflectingComplaints" type="List"/>
+    <aura:attribute name="dataHistory" type="List"/>
+    <aura:attribute name="dataContactInformation" type="Object"/>
+    <aura:attribute name="dataServicePackage" type="Object"/>
+    <aura:attribute name="dataCSDLQG" type="Object"/>
+    <aura:attribute name="dataHotLine" type="Object"/>
+     <aura:attribute name="dataChanCat" type="Object"/>
+    
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="columns1" type="List"/>
+    <aura:attribute name="columns2" type="List"/>
+    
+     <!--loading spinner start-->
+        <aura:if isTrue="{!v.spinner}">
+            <div aura:id="spinnerId" class="slds-spinner_container">
+                <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                    <span class="slds-assistive-text">Loading...</span>
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                </div>
+            </div>
+        </aura:if>
+        <!-- Loading spinner end-->    
+    
+    <lightning:card footer="" iconName="standard:search" title="Tra cứu nhanh theo số thuê bao">
+
+        <div style="margin-left:10px ; margin-top:10px; margin-right:10px">
+            <lightning:button class = "full-width" variant="brand"
+                              label="Lịch sử chuyển đổi dịch vụ"
+                              title="Tra cứu lịch sử chuyển đổi dịch vụ"
+                              onclick="{! c.openModelHistory }"/>
+        </div>
+        <div style="margin-left:10px ; margin-top:10px; margin-right:10px">
+            <lightning:button class = "full-width" variant="brand"
+                              label="Gói cước đang sử dụng"
+                              title="Tra cứu gói cước đang sử dụng"
+                              onclick="{! c.openModelServicePackage }"/>
+        </div>
+        
+        <div style="margin-left:10px ; margin-top:10px; margin-right:10px">
+            <lightning:button class = "full-width" variant="brand"
+                              label="Thuê bao CSDLQG"
+                              title="Tra cứu thuê bao CSDLQG"
+                              onclick="{! c.openModelCSDLQG }"/>
+        </div>
+        
+        <aura:if isTrue="{!v.checkProfile}">
+        <div style="margin-left:10px ; margin-top:10px; widht:100% ; margin-right:10px">
+            <lightning:button class = "full-width" variant="brand"
+                              label="Phản ánh Khiếu nại"
+                              title="Tra cứu Phản ánh Khiếu nại"
+                              onclick="{! c.openModelReflectingComplaints }"/>
+        </div>
+        </aura:if>
+        <div style="margin-left:10px; margin-top:10px; margin-right:10px">
+            <lightning:button class = "full-width" variant="brand"
+                              label="Cước nóng, tạm tính, chưa thanh toán"
+                              title="Tra cứu Cước nóng, cước tạm tính, cước chưa thanh toán"
+                              onclick="{! c.isModelBoxOpenHotLine }"/>
+        </div>
+        <div style="margin-left:10px ; margin-top:10px; margin-right:10px">
+            <lightning:button class = "full-width" variant="brand"
+                              label="Thông tin doanh thu (ARPU)"
+                              title="Dữ liệu doanh thu"
+                              onclick="{! c.openModelARPU}"/>
+        </div>
+        
+        <div style="margin-left:10px ; margin-top:10px; margin-right:10px">
+            <lightning:button variant="brand"
+                              class = "full-width"
+                              label="Chi tiết thuê bao"
+                              title="Chi tiết thuê bao"
+                              onclick="{! c.openModel }"/>
+        </div>
+        
+        <div style="margin-left:10px ; margin-top:10px; margin-right:10px">
+            <lightning:button variant="brand"
+                              class = "full-width"
+                              label="Tra cứu thuê bao chặn cắt"
+                              title="Tra cứu thuê bao chặn cắt"
+                              onclick="{! c.openModelChanCat }"/>
+        </div>
+        
+    </lightning:card>
+    
+    <!-- Chi tiết thuê bao -->
+    <aura:if isTrue="{!v.isModelBoxOpen}">         
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_small">
+            <div class="slds-modal__container">
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick="{! c.closeModal }">
+                    <lightning:icon iconName="utility:close" alternativeText="Close" title="Close" />
+                    <span class="slds-assistive-text">Cancel and close</span>
+                </button>
+                <div class="slds-modal__header">
+                    <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Thông tin chi tiết thuê bao</h1>
+                </div>
+
+                <div class="slds-modal__content slds-p-around_medium -" id="modal-content-id-1">
+                     <div class="slds-grid slds-wrap">
+                        <div class="slds-size--1-of-1 slds-large-size--1-of-2  slds-p-right_small">
+                            <div class="slds-form__row">
+                                <div class="slds-form__item" role="listitem">
+                                    <div class="slds-form-element slds-form-element_edit slds-form-element_readonly slds-form-element_horizontal slds-hint-parent">
+                                        <span class="slds-form-element__label">Độ tin cậy thuê bao </span>
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-form-element__static">{!v.dataContactInformation.do_tin_cay_thue_bao }</div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-form__item" role="listitem"></div>
+                            </div>
+                            <div class="slds-form__row">
+                                <div class="slds-form__item" role="listitem">
+                                    <div class="slds-form-element slds-form-element_edit slds-form-element_readonly slds-form-element_horizontal slds-hint-parent">
+                                        <span class="slds-form-element__label">Cam kết</span>
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-form-element__static">{!v.dataContactInformation.cam_ket }</div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-form__item" role="listitem"></div>
+                            </div>
+                            
+                            <div class="slds-form__row">
+                                <div class="slds-form__item" role="listitem">
+                                    <div class="slds-form-element slds-form-element_edit slds-form-element_readonly slds-form-element_horizontal slds-hint-parent">
+                                        <span class="slds-form-element__label">Thông tin xác minh</span>
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-form-element__static">{!v.dataContactInformation.thong_tin_xac_minh }</div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-form__item" role="listitem"></div>
+                            </div>
+                            
+                             <div class="slds-form__row">
+                                <div class="slds-form__item" role="listitem">
+                                    <div class="slds-form-element slds-form-element_edit slds-form-element_readonly slds-form-element_horizontal slds-hint-parent">
+                                        <span class="slds-form-element__label">Tình trạng hồ sơ</span>
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-form-element__static">{!v.dataContactInformation.tinh_trang_ho_so }</div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-form__item" role="listitem"></div>
+                            </div>
+                             <div class="slds-form__row">
+                                <div class="slds-form__item" role="listitem">
+                                    <div class="slds-form-element slds-form-element_edit slds-form-element_readonly slds-form-element_horizontal slds-hint-parent">
+                                        <span class="slds-form-element__label">Khdntq</span>
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-form-element__static">{!v.dataContactInformation.khdntq }</div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-form__item" role="listitem"></div>
+                            </div>
+                            
+                             <div class="slds-form__row">
+                                <div class="slds-form__item" role="listitem">
+                                    <div class="slds-form-element slds-form-element_edit slds-form-element_readonly slds-form-element_horizontal slds-hint-parent">
+                                        <span class="slds-form-element__label">Email</span>
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-form-element__static">{!v.dataContactInformation.email }</div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-form__item" role="listitem"></div>
+                            </div>
+                        </div>
+                        <div class="slds-size--1-of-1 slds-large-size--1-of-2 slds-p-right_small">
+                            <div class="slds-form__row">
+                                <div class="slds-form__item" role="listitem">
+                                    <div class="slds-form-element slds-form-element_edit slds-form-element_readonly slds-form-element_horizontal slds-hint-parent">
+                                        <span class="slds-form-element__label">Ngày cấp CCCD</span>
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-form-element__static">{!v.dataContactInformation.ngay_cap_cccd }</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-form__item" role="listitem"></div>
+                            </div>
+                            
+                            <div class="slds-form__row">
+                                <div class="slds-form__item" role="listitem">
+                                    <div class="slds-form-element slds-form-element_edit slds-form-element_readonly slds-form-element_horizontal slds-hint-parent">
+                                        <span class="slds-form-element__label">Nơi cấp CCCD</span>
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-form-element__static">{!v.dataContactInformation.noi_cap_cccd }</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-form__item" role="listitem"></div>
+                            </div>
+                            
+                            <div class="slds-form__row">
+                                <div class="slds-form__item" role="listitem">
+                                    <div class="slds-form-element slds-form-element_edit slds-form-element_readonly slds-form-element_horizontal slds-hint-parent">
+                                        <span class="slds-form-element__label">Hộ khẩu</span>
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-form-element__static">{!v.dataContactInformation.ho_khau }</div>
+                                        </div>
+                                    </div>
+                                </div> 
+                                <div class="slds-form__item" role="listitem"></div>
+                            </div>
+                            
+                            <div class="slds-form__row">
+                                <div class="slds-form__item" role="listitem">
+                                    <div class="slds-form-element slds-form-element_edit slds-form-element_readonly slds-form-element_horizontal slds-hint-parent">
+                                        <span class="slds-form-element__label">Nơi đăng ký hộ khẩu</span>
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-form-element__static">{!v.dataContactInformation.noi_dk_ho_khau }</div>
+                                        </div>
+                                    </div>
+                                </div> 
+                                <div class="slds-form__item" role="listitem"></div>
+                            </div>
+                            
+                            <div class="slds-form__row">
+                                <div class="slds-form__item" role="listitem">
+                                    <div class="slds-form-element slds-form-element_edit slds-form-element_readonly slds-form-element_horizontal slds-hint-parent">
+                                        <span class="slds-form-element__label">Ngày đăng ký hộ khẩu</span>
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-form-element__static">{!v.dataContactInformation.ngay_dk_ho_khau }</div>
+                                        </div>
+                                    </div>
+                                </div> 
+                                <div class="slds-form__item" role="listitem"></div>
+                            </div>
+                         </div>
+                    </div>
+                </div>
+                <div class="slds-modal__footer">
+                    <button class="slds-button slds-button_neutral" aria-label="Cancel and close" onclick="{! c.closeModal }">Đóng</button>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>   
+    </aura:if>
+    
+    
+     <!-- Tra cứu thuê bao chặn cắt -->
+    <aura:if isTrue="{!v.openModelChanCat}">         
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_small">
+            <div class="slds-modal__container">
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick="{! c.closeModal }">
+                    <lightning:icon iconName="utility:close" alternativeText="Close" title="Close" />
+                    <span class="slds-assistive-text">Cancel and close</span>
+                </button>
+                <div class="slds-modal__header">
+                    <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Thông tin thuê bao chặn cắt</h1>
+                </div>
+                
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+
+                    
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-size--1-of-1 slds-large-size--2-of-6  slds-p-right_small">
+                            <lightning:input aura:id="id_phone" 
+                                             type="text"
+                                             label="Số thuê bao"                                                                
+                                             value="{!v.contactPhone}"
+                                             required="true"
+                                             /> 
+                        </div>
+                        <div class="slds-size--1-of-1 slds-large-size--1-of-6  slds-p-right_small">
+                            <div>
+                                <lightning:button class="button-search-01" 
+                                                  variant="brand" 
+                                                  label="Tra cứu" 
+                                                  title="Brand action" 
+                                                  onclick="{! c.handleSearchChanCat }"
+                                                  />  
+                            </div>
+                        </div>
+                    </div>   
+                    
+                    
+                     <aura:if isTrue="{!v.spinner3}">
+                        <div aura:id="spinnerId" class="slds-spinner_container">
+                            <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                                <span class="slds-assistive-text">Loading...</span>
+                                <div class="slds-spinner__dot-a"></div>
+                                <div class="slds-spinner__dot-b"></div>
+                            </div>
+                        </div>
+                    </aura:if>
+                    
+                                           
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-size--1-of-1 slds-large-size--1-of-2 slds-m-top_medium slds-p-right_small">
+                            <div class="slds-form__row">
+                                <div class="slds-form__item" role="listitem">
+                                    <div class="slds-form-element slds-form-element_edit slds-form-element_readonly slds-form-element_horizontal slds-hint-parent">
+                                        <span class="slds-form-element__label">Số thuê bao</span>
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-form-element__static">{!v.dataChanCat.so_thue_bao }</div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-form__item" role="listitem"></div>
+                            </div>
+                            
+                            <div class="slds-form__row">
+                                <div class="slds-form__item" role="listitem">
+                                    <div class="slds-form-element slds-form-element_edit slds-form-element_readonly slds-form-element_horizontal slds-hint-parent">
+                                        <span class="slds-form-element__label">Loại thuê bao</span>
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-form-element__static">{!v.dataChanCat.loai_thue_bao }</div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-form__item" role="listitem"></div>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="slds-size--1-of-1 slds-large-size--1-of-2 slds-m-top_medium slds-p-right_small">
+                            <div class="slds-form__row">
+                                <div class="slds-form__item" role="listitem">
+                                    <div class="slds-form-element slds-form-element_edit slds-form-element_readonly slds-form-element_horizontal slds-hint-parent">
+                                        <span class="slds-form-element__label">Trạng thái chặn cắt</span>
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-form-element__static">{!v.dataChanCat.trang_thai_chan_cat }</div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-form__item" role="listitem"></div>
+                            </div>
+                            
+                            <div class="slds-form__row">
+                                <div class="slds-form__item" role="listitem">
+                                    <div class="slds-form-element slds-form-element_edit slds-form-element_readonly slds-form-element_horizontal slds-hint-parent">
+                                        <span class="slds-form-element__label">Ngày hết hạn</span>
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-form-element__static">{!v.dataChanCat.ngay_het_han }</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-form__item" role="listitem"></div>
+                            </div>
+                            
+                            
+                        </div>  
+                       
+                    </div>
+                </div>
+                <div class="slds-modal__footer">
+                    <button class="slds-button slds-button_neutral" aria-label="Cancel and close" onclick="{! c.closeModal }">Đóng</button>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>   
+    </aura:if>
+    
+    
+    <!-- Tra cứu lịch sử chuyển đổi dịch vụ -->
+    <aura:if isTrue="{!v.isModelBoxOpenHistory}">         
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_small">
+            <div class="slds-modal__container">
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick="{! c.closeModal }">
+                    <lightning:icon iconName="utility:close" alternativeText="Close" title="Close" />
+                    <span class="slds-assistive-text">Cancel and close</span>
+                </button>
+                <div class="slds-modal__header">
+                    <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Thông tin lịch sử chuyển đổi dịch vụ</h1>
+                </div>
+
+                <div style="max-width: 100%; overflow: auto">
+                    <div style="min-width: 100%">
+                        <lightning:datatable keyField="ids" 
+                                             data="{! v.dataHistory }"
+                                             columns="{! v.columns1 }"
+                                             hideCheckboxColumn="true"
+                                             minColumnWidth="10"
+                                             columnWidthsMode="fixed" 
+                                             />
+                    </div>
+                </div>
+                <div class="slds-modal__footer">
+                    <button class="slds-button slds-button_neutral" aria-label="Cancel and close" onclick="{! c.closeModal }">Đóng</button>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>   
+    </aura:if>
+    
+    <!-- Tra cứu lịch ARPU -->
+    <aura:if isTrue="{!v.isModelBoxOpenARPU}">         
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_small">
+            <div class="slds-modal__container">
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick="{! c.closeModal }">
+                    <lightning:icon iconName="utility:close" alternativeText="Close" title="Close" />
+                    <span class="slds-assistive-text">Cancel and close</span>
+                </button>
+                <div class="slds-modal__header">
+                    <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Tra cứu thông tin doanh thu</h1>
+                </div>
+
+                <div style="max-width: 100%; overflow: auto">
+                    <div style="min-width: 100%">
+                        <lightning:datatable keyField="ids" 
+                                             data="{! v.dataHistory }"
+                                             columns="{! v.columns1 }"
+                                             hideCheckboxColumn="true"
+                                             minColumnWidth="10"
+                                             columnWidthsMode="fixed" 
+                                             />
+                    </div>
+                </div>
+                <div class="slds-modal__footer">
+                    <button class="slds-button slds-button_neutral" aria-label="Cancel and close" onclick="{! c.closeModal }">Đóng</button>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>   
+    </aura:if>
+    
+    <!-- Tra cứu Cước nóng, cước tạm tính, cước chưa thanh toán -->
+    <aura:if isTrue="{!v.isModelBoxOpenHotLine}">         
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_medium">
+            <div class="slds-modal__container">
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick="{! c.closeModal }">
+                    <lightning:icon iconName="utility:close" alternativeText="Close" title="Close" />
+                    <span class="slds-assistive-text">Cancel and close</span>
+                </button>
+                <div class="slds-modal__header">
+                    <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Thông tin cước nóng, cước tạm tính, cước chưa thanh toán</h1>
+                </div>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-size--1-of-1 slds-large-size--1-of-3 slds-m-top_medium slds-p-right_small">
+                            <div class="slds-form__row">
+                                <div class="slds-form__item" role="listitem">
+                                    <div class="slds-form-element slds-form-element_edit slds-form-element_readonly slds-form-element_horizontal slds-hint-parent">
+                                        <span class="slds-form-element__label">Thuê bao </span>
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-form-element__static">{!v.dataHotLine.thuebao}</div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-form__item" role="listitem"></div>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="slds-size--1-of-1 slds-large-size--1-of-3 slds-m-top_medium slds-p-right_small">
+                            <div class="slds-form__row">
+                                <div class="slds-form__item" role="listitem">
+                                    <div class="slds-form-element slds-form-element_edit slds-form-element_readonly slds-form-element_horizontal slds-hint-parent">
+                                        <span class="slds-form-element__label">Thời gian </span>
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-form-element__static">{!v.dataHotLine.thoigian}</div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-form__item" role="listitem"></div>
+                            </div>
+                            
+                            
+                        </div>  
+                        <div class="slds-size--1-of-1 slds-large-size--1-of-3 slds-m-top_medium slds-p-right_small">
+                            <div class="slds-form__row">
+                                <div class="slds-form__item" role="listitem">
+                                    <div class="slds-form-element slds-form-element_edit slds-form-element_readonly slds-form-element_horizontal slds-hint-parent">
+                                        <span class="slds-form-element__label">Thông tin </span>
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-form-element__static">{!v.dataHotLine.data}</div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-form__item" role="listitem"></div>
+                            </div>
+                            
+                        </div>  
+                    </div>
+                </div>
+                <div class="slds-modal__footer">
+                    <button class="slds-button slds-button_neutral" aria-label="Cancel and close" onclick="{! c.closeModal }">Đóng</button>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>   
+    </aura:if>
+    
+    <!-- Tra cứu Tra cứu gói cước đang sử dụng -->
+    <aura:if isTrue="{!v.openModelServicePackage}">         
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_small">
+            <div class="slds-modal__container">
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick="{! c.closeModal }">
+                    <lightning:icon iconName="utility:close" alternativeText="Close" title="Close" />
+                    <span class="slds-assistive-text">Cancel and close</span>
+                </button>
+                <div class="slds-modal__header">
+                    <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Thông tin gói cước đang sử dụng</h1>
+                </div>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    
+                    <div style="max-width: 100%; overflow: auto">
+                        <div style="min-width: 100%">
+                            <lightning:datatable keyField="ids" 
+                                                 data="{! v.dataServicePackage }"
+                                                 columns="{! v.columns2 }"
+                                                 hideCheckboxColumn="true"
+                                                 minColumnWidth="10"
+                                                 columnWidthsMode="fixed" 
+                                                 />
+                        </div>
+                    </div>
+                    
+                    
+                </div>
+                <div class="slds-modal__footer">
+                    <button class="slds-button slds-button_neutral" aria-label="Cancel and close" onclick="{! c.closeModal }">Đóng</button>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>   
+    </aura:if>
+    
+    <!--Tra cứu thuê bao CSDLQG-->
+    <aura:if isTrue="{!v.openModelCSDLQG}">         
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_small">
+            <div class="slds-modal__container">
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick="{! c.closeModal }">
+                    <lightning:icon iconName="utility:close" alternativeText="Close" title="Close" />
+                    <span class="slds-assistive-text">Cancel and close</span>
+                </button>
+                <div class="slds-modal__header">
+                    <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Thông tin thuê bao CSDLQG</h1>
+                </div>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-size--1-of-1 slds-large-size--1-of-2  slds-p-right_small">
+                            <div class="slds-form__row">
+                                <div class="slds-form__item" role="listitem">
+                                    <div class="slds-form-element slds-form-element_edit slds-form-element_readonly slds-form-element_horizontal slds-hint-parent">
+                                        <span class="slds-form-element__label">Thuê bao </span>
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-form-element__static">{!v.dataCSDLQG.Thuebao}</div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-form__item" role="listitem"></div>
+                            </div>
+                            <div class="slds-form__row">
+                                <div class="slds-form__item" role="listitem">
+                                    <div class="slds-form-element slds-form-element_edit slds-form-element_readonly slds-form-element_horizontal slds-hint-parent">
+                                        <span class="slds-form-element__label">Vi phạm hoặc không vi phạm</span>
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-form-element__static">{!v.dataCSDLQG.TC}</div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-form__item" role="listitem"></div>
+                            </div>
+                            
+                            <div class="slds-form__row">
+                                <div class="slds-form__item" role="listitem">
+                                    <div class="slds-form-element slds-form-element_edit slds-form-element_readonly slds-form-element_horizontal slds-hint-parent">
+                                        <span class="slds-form-element__label">Nghị định 13</span>
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-form-element__static">{!v.dataCSDLQG.ND13}</div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-form__item" role="listitem"></div>
+                            </div>
+                        </div>
+                        <div class="slds-size--1-of-1 slds-large-size--1-of-2 slds-p-right_small">
+                            <div class="slds-form__row">
+                                <div class="slds-form__item" role="listitem">
+                                    <div class="slds-form-element slds-form-element_edit slds-form-element_readonly slds-form-element_horizontal slds-hint-parent">
+                                        <span class="slds-form-element__label">CSDLQG</span>
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-form-element__static">{!v.dataCSDLQG.CSDLDCQG}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-form__item" role="listitem"></div>
+                            </div>
+                            
+                            <div class="slds-form__row">
+                                <div class="slds-form__item" role="listitem">
+                                    <div class="slds-form-element slds-form-element_edit slds-form-element_readonly slds-form-element_horizontal slds-hint-parent">
+                                        <span class="slds-form-element__label">Ngày đối soát</span>
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-form-element__static">{!v.dataCSDLQG.Ngay_doi_soat}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="slds-form__item" role="listitem"></div>
+                            </div>
+                            
+                            <div class="slds-form__row">
+                                <div class="slds-form__item" role="listitem">
+                                    <div class="slds-form-element slds-form-element_edit slds-form-element_readonly slds-form-element_horizontal slds-hint-parent">
+                                        <span class="slds-form-element__label">Nghị định 49</span>
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-form-element__static">{!v.dataCSDLQG.ND49}</div>
+                                        </div>
+                                    </div>
+                                </div> 
+                                <div class="slds-form__item" role="listitem"></div>
+                            </div>
+                            
+                        </div>   
+                    </div>
+                </div>
+                <div class="slds-modal__footer">
+                    <button class="slds-button slds-button_neutral" aria-label="Cancel and close" onclick="{! c.closeModal }">Đóng</button>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>   
+    </aura:if>
+    <!--Tra cứu Phản ánh Khiếu nại-->
+    <aura:if isTrue="{!v.openModelReflectingComplaints}">         
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_large">
+            <div class="slds-modal__container">
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick="{! c.closeModal }">
+                    <lightning:icon iconName="utility:close" alternativeText="Close" title="Close" />
+                    <span class="slds-assistive-text">Cancel and close</span>
+                </button>
+                <div class="slds-modal__header">
+                    <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Tra cứu Phản ánh Khiếu nại</h1>
+                </div> 
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" style ="height:500px">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-size--1-of-1 slds-large-size--1-of-6  slds-p-right_small">
+                            <lightning:input aura:id="id_phone" 
+                                             type="text"
+                                             label="Số thuê bao"                                                                
+                                             value="{!v.contactPhone}"
+                                             required="true"
+                                             /> 
+                            <aura:if isTrue="{!v.missingPhone}">
+                                <span class="error-message">Vui lòng nhập số thuê bao</span>
+                            </aura:if> 
+                        </div>
+                        <div class="slds-size--1-of-1 slds-large-size--1-of-6  slds-p-right_small">
+                            <lightning:select aura:id="select" name="select" label="Status" onchange="{! c.onChangeOption}" value = "3">
+                                <option text="--None--" value=""></option>
+                                <aura:iteration items="{!v.valueStatus}" var="item">
+                                    <option text="{!item.label}" value="{!item.value}"></option>
+                                </aura:iteration>
+                            </lightning:select>
+                             <aura:if isTrue="{!v.missingStatus}">
+                                <span class="error-message">Vui lòng điền trạng thái</span>
+                            </aura:if> 
+                        </div>
+                        <div class="slds-size--1-of-1 slds-large-size--1-of-6  slds-p-right_small">
+                            <lightning:input type="date" 
+                                             name="fromdate" 
+                                             label="Từ ngày" 
+                                             required="true"
+                                             value="{!v.fromdate}"
+                                             />
+                             <aura:if isTrue="{!v.missingFromDate}">
+                                <span class="error-message">Vui lòng điền 'Từ ngày'</span>
+                            </aura:if> 
+                        </div>
+                        <div class="slds-size--1-of-1 slds-large-size--1-of-6  slds-p-right_small">
+                            <lightning:input type="date" 
+                                             name="todate" 
+                                             label="Đến ngày"
+                                             required="true"
+                                             value="{!v.todate}"/>
+                             <aura:if isTrue="{!v.missingToDate}">
+                                <span class="error-message">Vui lòng điền 'Đến ngày'</span>
+                            </aura:if> 
+                        </div>
+                        <div class="slds-size--1-of-1 slds-large-size--1-of-6  slds-p-right_small">
+                            <c:customLookup objectAPIName="Master_Data__c" embeddedInfo="Tìm đơn vị..." recordtypeName = 'Unit'  IconName="standard:account" label="Đơn vị" selectedRecord="{!v.selectedLookUpRecord}"/>
+                            <aura:if isTrue="{!v.missingUnit}">
+                                <span class="error-message">Vui lòng nhập 'Đơn vị'</span>
+                            </aura:if> 
+                        </div>
+                        <div class="slds-size--1-of-1 slds-large-size--1-of-6  slds-p-right_small">
+                            <div>
+                                <lightning:button class="button-search-01" 
+                                                  variant="brand" 
+                                                  label="Tra cứu" 
+                                                  title="Brand action" 
+                                                  onclick="{! c.handleClickSearchReflectingComplaints }"/>  
+                            </div>
+                        </div>
+                    </div>   
+                    <!--div style="max-width: 1000px;  max-height: 300px; overflow: auto; margin-top:50px">                           
+                        <div style="min-width: 400%">
+                            <lightning:datatable keyField="id" 
+                                                 data="{! v.data }"
+                                                 columns="{! v.columns }"
+                                                 hideCheckboxColumn="true"
+                                                 minColumnWidth="10"
+                                                 columnWidthsMode="auto" 
+                                                 />
+                            
+                        </div> 
+                    </div -->
+                    
+                    <!--loading spinner start-->
+                    <aura:if isTrue="{!v.spinner2}">
+                        <div aura:id="spinnerId" class="slds-spinner_container">
+                            <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                                <span class="slds-assistive-text">Loading...</span>
+                                <div class="slds-spinner__dot-a"></div>
+                                <div class="slds-spinner__dot-b"></div>
+                            </div>
+                        </div>
+                    </aura:if>
+                    <!-- Loading spinner end-->    
+                    
+                    <div style="margin-top:30px">                           
+                            <lightning:datatable keyField="id" 
+                                                 data="{! v.dataReflectingComplaints }"
+                                                 columns="{! v.columns }"
+                                                 hideCheckboxColumn="true"
+                                                 minColumnWidth="10"
+                                                 columnWidthsMode="fixed" 
+                                                 />
+                    </div>
+                </div>
+                <div class="slds-modal__footer">
+                    <button class="slds-button slds-button_neutral" aria-label="Cancel and close" onclick="{! c.closeModal }">Đóng</button>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>   
+    </aura:if>
+</aura:component>

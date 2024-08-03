@@ -1,0 +1,135 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader"
+ access="global" controller="MBFPhoneController">
+ <aura:attribute name="intervalId" type="String"></aura:attribute>
+ <aura:attribute name="wallBoard" type='Object'></aura:attribute>
+ <aura:attribute name="loading" type='boolean'></aura:attribute>
+ <aura:handler name="init" value="{!this}" action="{!c.doInit}"></aura:handler>
+ <div class="wrapper">
+    <div class="wrapper-wall-boad">
+        <div class="btn-refresh">
+            <lightning:button variant="brand" label="Refresh" disabled="{!v.loading}" onclick="{!c.handleRefresh}"/>
+        </div>
+        <div class="title-unit">Đơn vị  &lt;{!v.wallBoard.managementUnit || ''} - {!v.wallBoard.partner || ''}&gt; </div>
+        <div class="container">
+            <div class="grid-container">
+                <div class="title-wrapper" style="grid-column: span 2">
+                    <lightning:icon iconName="standard:call" size="large"></lightning:icon>
+                    <span class="title-wrapper-text">Cuộc gọi</span>
+                </div>
+                <div class="card">
+                    <lightning:icon iconName="utility:dialing"></lightning:icon>
+                <div>
+                    <p class="card-total">{!v.wallBoard.totalCall || 0}</p>
+                    <p>CUỘC GỌI ĐẾN HỆ THỐNG</p>
+                </div>
+                </div>
+                <div class="card">
+                    <lightning:icon iconName="utility:call"></lightning:icon>
+                    <div>
+                    <p class="card-total">{!v.wallBoard.totalCallDtv || 0}</p>
+                    <p>CUỘC GỌI ĐẾN ĐTV</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <lightning:icon iconName="utility:dialing"></lightning:icon>
+                    <div>
+                    <p class="card-total">{!v.wallBoard.totalCallAnswered || 0}</p>
+                    <p>CUỘC GỌI ĐƯỢC TRẢ LỜI</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <lightning:icon iconName="utility:clock"></lightning:icon>
+                    <div>
+                    <p class="card-total">{!v.wallBoard.totalCallWait || 0}</p>
+                    <p>CUỘC GỌI ĐANG CHỜ</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <lightning:icon iconName="utility:outbound_call"></lightning:icon>
+                    <div>
+                    <p class="card-total">{!v.wallBoard.totalCallOut || 0}</p>
+                    <p>CUỘC GỌI RA</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-container">
+                <div class="title-wrapper" style="grid-column: span 2">
+                    <lightning:icon iconName="standard:customers" size="large"></lightning:icon>
+                    <span class="title-wrapper-text">Điện thoại viên</span>
+                </div>
+                <div class="card">
+                    <lightning:icon iconName="utility:people"></lightning:icon>
+                <div>
+                    <p class="card-total">{!v.wallBoard.totalDtvCurrent || 0}</p>
+                    <p>TỔNG SỐ ĐTV</p>
+                </div>
+                </div>
+                <div class="card">
+                    <lightning:icon iconName="utility:dialing"></lightning:icon>
+                    <div>
+                    <p class="card-total">{!v.wallBoard.totalDtvAnswering || 0}</p>
+                    <p>ĐANG TRẢ LỜI</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <lightning:icon iconName="utility:resource_absence"></lightning:icon>
+                    <div>
+                    <p class="card-total">{!v.wallBoard.totalDtvNotready || 0}</p>
+                    <p>CHƯA SẴN SÀNG</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <lightning:icon iconName="utility:user"></lightning:icon>
+                    <div>
+                    <p class="card-total">{!v.wallBoard.totalDtvFreeTime || 0}</p>
+                    <p>ĐANG SẴN SÀNG</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <lightning:icon iconName="utility:adduser"></lightning:icon>
+                    <div>
+                    <p class="card-total">{!v.wallBoard.totalAdditional || 0}</p>
+                    <p>CẦN BỔ SUNG</p>
+                    </div>
+                </div>
+            </div>
+            <div class="title-wrapper" style="grid-column: span 2">
+                <span class="title-wrapper-text">Tỷ lệ phục vụ</span>
+            </div>
+            <div class="grid-container">
+                <div class="card">
+                    <lightning:icon iconName="utility:percent"></lightning:icon>
+                    <div>
+                    <p class="card-total">{!v.wallBoard. svRatio || 0}</p>
+                    <p>TỶ LỆ PHỤC VỤ CHUNG</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <lightning:icon iconName="utility:percent"></lightning:icon>
+                    <div>
+                    <p class="card-total">{!v.wallBoard.svRatio60 || 0}</p>
+                    <p>TỶ LỆ PHỤC VỤ 60S</p>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-container">
+                <div class="card">
+                    <lightning:icon iconName="utility:outbound_call"></lightning:icon>
+                    <div>
+                    <p class="card-total">{!v.wallBoard.nhanTran || 0}</p>
+                    <p>CUỘC GỌI TRÀN ĐI</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <lightning:icon iconName="utility:incoming_call"></lightning:icon>
+                    <div>
+                    <p class="card-total">{!v.wallBoard.nhanTran || 0}</p>
+                    <p>CUỘC GỌI NHẬN TRÀN</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+ </div>
+</aura:component>

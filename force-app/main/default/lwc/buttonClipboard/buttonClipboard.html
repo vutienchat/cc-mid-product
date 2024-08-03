@@ -1,0 +1,10 @@
+<template>
+    <template if:true={value}>
+        <template if:true={copied}>
+            <lightning-icon icon-name="utility:check" size="xx-small" variant="success" class="slds-m-left_xx-small"></lightning-icon>
+        </template>
+        <template if:false={copied}>
+            <lightning-icon icon-name="utility:copy" size="xx-small" onclick={handleCopy} class="btn-copy slds-m-left_xx-small"></lightning-icon>
+        </template>
+    </template>
+</template>

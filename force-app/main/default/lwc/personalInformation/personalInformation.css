@@ -1,0 +1,50 @@
+.container{
+    margin: 0px 10px 10px 10px;
+    padding: 15px;
+    padding-top: 0;
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,.1);
+}
+.personal-information-tab{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 50px;
+    margin: 30px 0;
+}
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .header-cell {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+    background-color: #f2f2f2;
+  }
+  
+  .custom-table .table-cell {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .custom-table .table-row:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+
+
+  .btn-tab{
+    background-color: #fff;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.34901960784313724);
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border: none;
+    background-image: none;
+  }
+
+  .btn-tab-label{
+    font-weight: 500;
+  }

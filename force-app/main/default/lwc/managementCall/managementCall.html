@@ -1,0 +1,48 @@
+<template>
+    <div class="slds-text-heading_medium slds-text-align_center tab-title">Quản lý cuộc gọi</div>
+    <div class='slds-p-vertical_x-small'>
+        <lightning-button-icon disabled={loading} onclick={getList} icon-name="utility:refresh" title="Tự động tải lại sau 10s"></lightning-button-icon>
+    </div>
+    <div class="table-wrapper">
+        <table class="table-sticky">
+            <thead>
+                <tr>
+                  <th class="header-cell">Mã danh số</th>
+                  <th class="header-cell" style="width:140px">Trạng thái</th>
+                  <th class="header-cell">Workplace</th>
+                  <th class="header-cell">Hành động</th>
+                </tr>
+              </thead>
+            <tbody>
+              <template for:each={listAgentByRegion} for:item="agentByRegion">
+                    <tr class="table-row" key={agentByRegion.agentId}>
+                      <td class="table-cell">
+                        {agentByRegion.agentCode}
+                      </td>
+                      <td class="table-cell">{agentByRegion.agentStatus}</td>
+                      <td class="table-cell">
+                        {agentByRegion.workplaceState}
+                      </td>
+                      <td class="table-cell">
+                        <lightning-button-menu  
+                          disabled={agentByRegion.disabled}
+                          variant="border-filled" 
+                          icon-name="utility:call" 
+                          menu-alignment="center" 
+                          onselect={handleMakeCall}
+                          data-phone-number={agentByRegion.phone}
+                          data-agent-name={agentByRegion.name}>
+                          <lightning-menu-item value="BargeIn" label="BargeIn"></lightning-menu-item>
+                          <lightning-menu-item value="Whisper" label="Whisper"></lightning-menu-item>
+                          <lightning-menu-item value="Listen" label="Listen"></lightning-menu-item>
+                      </lightning-button-menu>
+                      </td>
+                    </tr>
+              </template>
+            </tbody>
+          </table>
+          <template if:true={isEmpty}>
+            <p class="table-empty">No items to display.</p>
+          </template>
+    </div>
+</template>

@@ -1,0 +1,77 @@
+<aura:component implements="flexipage:availableForAllPageTypes,force:lightningQuickAction,force:hasRecordId" access="global" controller="GMS_SearchProductController">
+    <aura:attribute name="productList" type="List[]"/>
+    <aura:attribute name="nhomgiagoi" type="String" />
+    <aura:attribute name="domainUrl" type="String" />
+    <aura:attribute name="isOpen" type="boolean" default="false"/>
+    <aura:attribute name="Spinner" type="boolean" default="false"/>
+    <aura:attribute name="contactDetail" type="Contact"/>
+    <aura:attribute name="isShowMessage" type="boolean" default="false"/>
+    <lightning:notificationsLibrary aura:id="notifLib"/>
+     <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="isProduct" type="boolean" default="false"/>
+    
+    <lightning:card class="slds-card_boundary" iconName="standard:search" title="Tìm kiếm thông tin gói cước"> 
+        <!--loading spinner start... style=Brand Medium (blue dots)-->
+        <aura:if isTrue="{!v.Spinner}">
+            <div aura:id="spinnerId" class="slds-spinner_container">
+                <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                    <span class="slds-assistive-text">Loading</span>
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                </div>
+            </div>
+        </aura:if>
+        <!-- Loading spinner end-->
+    
+        <div aura:id="formSearch" class="slds-grid slds-p-around_medium slds-wrap">
+            <div class="slds-col slds-size_2-of-3">                
+                <lightning:input aura:id="id_nhomgiagoi" 
+                                 type="text"
+                                 label="Nhập nhóm giá gói"                                                                
+                                 value="{!v.nhomgiagoi}"/>                                
+            </div>
+            <div class="slds-col slds-size_1-of-3" style="margin-top:10px">
+                <div style="margin-left:10px">
+                <lightning:button aura:id="id_btn_search"
+                                  class="slds-m-top_small" 
+                                  label="Tìm kiếm"
+                                  variant="brand"
+                                  disabled="false"
+                                  onclick="{!c.clickSearch}"/>
+                    </div>
+            </div> 
+        </div>
+        
+        <aura:if isTrue="{!v.isProduct}">
+        <div class="slds-grid slds-p-around_medium slds-wrap">
+            <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered" style="table-layout: fixed;">
+                <thead>
+                    <tr class="slds-line-height_reset">
+                        <th scope="col">
+                            <div class="slds-truncate" title="Mã sản phẩm">Mã sản phẩm</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate" title="Mô tả">Mô tả</div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <aura:iteration items="{!v.productList}" var="item">
+                        <tr class="slds-hint-parent">
+                            <td style="width: 130px;">
+                                <div class="slds-truncate"><a href="{!v.domainUrl + '/' + item.Id}" target="_blank">{!item.ProductCode}</a></div>
+                            </td>
+                             <td style="width: 130px;">
+                                <div class="slds-truncate">{!item.Description}</div>
+                            </td>
+                        </tr>
+                    </aura:iteration>
+                </tbody>
+            </table>
+        </div>   
+        </aura:if>
+        <aura:if isTrue="{!v.isShowMessage}">
+        <p style="text-align:center">Không tìm thấy sản phẩm nào</p>
+        </aura:if>   
+   </lightning:card>
+</aura:component>

@@ -1,0 +1,31 @@
+<aura:component Controller="R1_SurveyResultNoteController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global" >
+    
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="isProcess" type="boolean" default="false" />
+    <aura:attribute name="reason" type="String" />
+    
+    <aura:handler name='init' value='{!this}' action='{!c.doInit}' />
+    
+    <article class="slds-card">
+        <div class="slds-card__header slds-grid">
+            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__figure">
+                    <span class="slds-icon_container slds-icon-standard-account" title="account">
+                        <span class="slds-assistive-text">Yêu cầu gọi ra do không đạt</span>
+                    </span>
+                </div>
+                <div class="slds-media__body">
+                    <h2 class="slds-card__header-title">
+                            <span>Yêu cầu gọi ra do không đạt</span>
+                    </h2>
+                </div>
+                <div class="slds-no-flex">
+                    <lightning:button label="Yêu cầu gọi ra" disabled="{!v.isProcess}" title="Yêu cầu gọi ra" onclick="{! c.onClick }"/>
+                </div>
+            </header>
+        </div>
+        <div class="slds-card__body slds-card__body_inner">
+            <lightning:textarea name="reason" title="Lý do" disabled="{!v.isProcess}" value="{!v.reason}"/>
+        </div>
+    </article>
+</aura:component>

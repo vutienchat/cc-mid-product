@@ -1,0 +1,38 @@
+<template>
+    <div if:true={isLoaded} class="slds-is-relative">
+        <lightning-spinner
+                alternative-text="Loading..." variant="brand">
+            </lightning-spinner>
+    </div>
+    <div if:false={isLoaded}>
+    <lightning-card title="Thông tin thời gian làm đang quá tải" if:true={data}>
+        <div class="datatable-container" style="max-width: 100%;  max-height: 300px; overflow: auto">
+            <div style="min-width: 100%">
+                <lightning-datatable data={data} hide-checkbox-column columns={columns} key-field="id"
+                    row-number-offset={rowOffset}></lightning-datatable>
+            </div>
+        </div>
+        <div class="container">
+            <div class="vertical-center">
+                <lightning-button variant="success" label="Xác nhận tạo lại" title="Successful action"
+                    onclick={handleReupload} style="margin-right:15px"></lightning-button>
+                <lightning-button if:true={isShowButtonImport} variant="success" label="Tạo ca trực" title="Successful action"
+                    onclick={handleCreateWorkShip}></lightning-button>
+            </div>
+        </div>
+        <p style="margin-left: 10px; font-size:17px; color:red">Lưu ý:</p>
+            <div style="margin-left: 15px;">
+            <span style="font-weight: 600;">Số NV dự kiến:</span><span>&nbsp; Là số nhân viên theo lịch ca trực (file import).</span>
+        </div>
+        <div style="margin-left: 15px;">
+            <span style="font-weight: 600;">Số bàn làm việc khả dụng:</span><span>&nbsp; Là số bàn khả dụng tối đa được phân bố cho đơn vị.</span>
+        </div>
+        <div style="margin-left: 15px;">
+            <span style="font-weight: 600;">Số bàn làm việc còn lại:</span><span>&nbsp; Là số bàn làm việc còn lại có thể được gán cho nhân viên của đơn vị.</span>
+        </div>
+        <div style="margin-left: 15px;">
+           <span>Nếu là số âm, tức là số nhân viên được vượt quá số bàn làm việc hiện có. Cần điều chỉnh lại số lượng nhân viên trong khung thời gian bị vượt.</span>
+        </div>
+    </lightning-card>
+</div>
+</template>

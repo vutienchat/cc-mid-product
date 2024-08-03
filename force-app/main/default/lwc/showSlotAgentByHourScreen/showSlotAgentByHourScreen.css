@@ -1,0 +1,37 @@
+.file-uploader {
+    margin-left: 4%;
+    margin: 0px auto;
+    width: 300px;
+}
+
+.error-message {
+    margin-top: 8px;
+    font-size: 12px;
+    color: red;
+}
+
+.upload-button {
+    margin-top: 16px;
+}
+
+.datatable-container {
+    width: auto;
+}
+.background-red {
+ background: red;
+}
+.slds-m-left_x-small {
+    text-align: center;
+}
+.container {
+    position: relative;
+  }
+  .vertical-center {
+margin: 0;
+position: absolute;
+top: 50%;
+left: 50%;
+-ms-transform: translate(-50%, -50%);
+transform: translate(-50%, -50%);
+margin-top: 50px;
+  }

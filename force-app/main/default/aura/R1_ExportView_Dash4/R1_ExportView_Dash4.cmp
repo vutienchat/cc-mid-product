@@ -1,0 +1,139 @@
+<aura:component controller="R1_ExportViewCtrl_Dash4" implements="lightning:actionOverride,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:appHostable,lightning:isUrlAddressable,force:lightningQuickAction" access="global">
+    <aura:html tag="style">
+        .slds-modal__container{
+        max-width: fit-content!important;
+        width:99%!important;}
+        .slds-tabs_default__content{
+        width:100%!important;
+        overflow-x:auto;
+        overflow-y:auto;
+        height:300px;}
+    </aura:html>
+    <aura:attribute name="fileName" type="String" default="datatable_data.csv"/>
+    <aura:attribute name="Spinner" type="boolean" default="false"/>
+    <aura:attribute name="Agent" type="String"/>
+    <aura:attribute name="Unit" type="String"/>
+    <aura:attribute name="fromDate" type="Datetime"  />
+    <aura:attribute name="toDate" type="Datetime"/>
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" /> 
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="data" type="Object"/>
+    <aura:attribute name="columnsChannel" type="List"/>
+    <aura:attribute name="dataChannel" type="Object"/>
+    <aura:attribute name="isSearch" type="boolean" default="false"/>
+    <aura:attribute name="selectedLookUpRecord2" type="sObject" default="{}"/>
+    <aura:attribute name="selectedLookUpRecord" type="sObject" default="{}"/>
+    <aura:attribute name="defaultDateTime" type="String"/>
+    <aura:attribute name="defaultDateTimeNow" type="String"/>
+    <aura:attribute name = "picklistUnitbyRegion" type="sObject[]"/>
+    <aura:attribute name = "UnitbyRegion" type="String"/>
+    <aura:attribute name = "picklistManagementUnit" type="sObject[]"/>
+    <aura:attribute name = "ManagementUnit" type="String"/>
+    <aura:attribute name="isSpinner" type="boolean" default="false"/>
+    
+    <lightning:workspaceAPI aura:id="workspace" />
+    
+    <!--loading spinner start -->
+    <aura:if isTrue="{v.Spinner}">
+        <div aura:id="spinerId" class="slds-spinner_container">
+            <div class="slds-spinner--brand slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                <span class="slds-assitive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </aura:if>
+    
+    <!--loading spinner end-->
+    <lightning:card title="Báo cáo chấm công thời gian làm việc">
+        <div aura:id="formDivSearch" class="slds-grid slds-p-around_x_large slds-wrap">
+            <div class="slds-col slds-size_1-of-8" style="margin-left:10px; margin-top:20px;" >
+                <lightning:select   aura:id = "groupfield"  
+                                  label = "Công ty khu vực"    
+                                  disabled="false"                                                                                             
+                                  value = "{!v.ManagementUnit}"
+                                  onchange="{!c.handleSelectManagementUnit}">
+                    <option value = "" class = "">--None--</option>
+                    <aura:iteration items = "{!v.picklistManagementUnit}" var = "item">
+                        <option text = "{!item.label}" 
+                                value = "{!item.value}" 
+                                class = ""
+                                selected = "{!item.value==v.ManagementUnit}" 
+                                />
+                    </aura:iteration>
+                </lightning:select>
+            </div>
+            
+            <div class="slds-col slds-size_1-of-8" style="margin-left:10px; margin-top:20px;" >
+                <lightning:select   aura:id = "groupfield"  
+                                  label = "Đơn vị"    
+                                  disabled="false"                                                                                             
+                                  value = "{!v.UnitbyRegion}"
+                                  onchange="{!c.handleSelectUnitByRegion}">
+                    <option value = "" class = "">--None--</option>
+                    <option value = "MFS" class = "">MFS</option>
+                    <option value = "TM" class = "">TM</option>
+                    <option value = "MP" class = "">MP</option>
+                    <aura:iteration items = "" var = "item">
+                        <option text = "{!item.label}" 
+                                value = "{!item.value}" 
+                                class = ""
+                                selected = "{!item.value==v.UnitbyRegion}" 
+                                />
+                    </aura:iteration>
+                </lightning:select>
+            </div>
+            <div class="slds-col slds-size_2-of-8" style="margin-left:10px;">
+                <lightning:input type="datetime" 
+                                 name="input2" 
+                                 label="Từ thời gian" 
+                                 value="{!v.defaultDateTime}" 
+                                 placeholder="Tìm thời gian"/>
+                
+            </div>
+            <div class="slds-col slds-size_2-of-8" style="margin-left:10px;">
+                <lightning:input type="datetime" 
+                                 name="input3" 
+                                 label="Đến thời gian" 
+                                 value="{!v.defaultDateTimeNow}"
+                                 min="{!v.defaultDateTime}"
+                                 messageWhenRangeUnderflow="Vui lòng nhập ngày lớn hơn 'Từ thời gian'"
+                                 placeholder="Tìm thời gian"/>
+            </div>
+            
+        </div>
+        
+        <div class="slds-col slds-size_1-of-3" style="margin-left:5px;">
+            <lightning:button aura:id="btn_search"
+                              class="slds-m-top_small"
+                              label="SEARCH"
+                              variant="brand"
+                              disabled="false"
+                              onclick="{!c.btnSearch}"/>
+        </div>
+    </lightning:card>
+    <aura:if isTrue="{!v.isSearch}">
+        <aura:if isTrue="{!v.isSpinner}">
+            
+            <lightning:spinner variant="brand" size="large"/> 
+            
+            <aura:set attribute="else">
+                <div style="float:right;position:relative;color:red;font-size:14px;">
+                    Dữ liệu export tối đa là 2000 dòng. Nếu nhiều hơn vui lòng xuất thành nhiều giai đoạn để không bị thiếu dữ liệu</div>
+                <div style="margin-left:50px;">
+                    <span><lightning:buttonIcon iconName="utility:download" variant="container" alternativeText="Download CSV" class="slds-m-left_xx-small" onclick="{!c.downloadCSVChannel}" title="Download CSV"/> </span>
+                    <span style="color: red;">Total Records:{!v.dataChannel.length}</span>
+                </div>
+                
+                <div style="height: 40vh">
+                    <lightning:datatable
+                                         keyField="id"
+                                         data="{! v.dataChannel }"
+                                         columns="{! v.columnsChannel }"
+                                         hideCheckboxColumn="true"/>
+                </div> 
+                <a id="downloadLink" style="display:none"></a>
+            </aura:set>
+        </aura:if>
+    </aura:if>
+</aura:component>

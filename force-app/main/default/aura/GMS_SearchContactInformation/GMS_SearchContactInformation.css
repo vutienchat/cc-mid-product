@@ -1,0 +1,29 @@
+.THIS .button-search-01 {
+    width: 100%;
+    margin-top: 20px; 
+}
+.THIS .datatable-x {
+   max-height:170px;  
+    text-align: center;
+    border-bottom: 0px;
+    overflow-x: auto !important;
+}
+.THIS .data {
+    width:500px;
+    max-height:170px;  
+    text-align: center;
+    box-sizing: content-box;
+
+}
+.THIS .error-message {
+    color: red
+}
+.THIS .full-width {
+    width: 100%;
+    background-color:rgba(65, 148, 249, 1);
+    font-weight:bold;
+}
+.THIS.slds-spinner_container {  
+  z-index: 10000;
+  position: fixed;   
+}

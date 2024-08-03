@@ -1,0 +1,31 @@
+.THIS .single-row-radio .slds-form-element__control {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.THIS .single-row-radio .slds-radio {
+    margin-right: 20px; /* Adjust the spacing between options */
+}
+
+.THIS .send-button {
+    text-align: right !important;
+    padding: 0px 15px 5px 0px !important
+}
+.THIS .single-row-radio .slds-form-element__legend {
+    font-weight: unset !important;
+}
+.THIS .single-row-radio {
+    margin-left: 2% !important;
+}
+.THIS .border-group {
+    font-weight: bold;
+}
+.THIS .slds-card {
+    border: 1px solid white !important;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px !important;
+    padding: 15px !important;
+    margin: 2% !important;
+}
+.THIS .item-question {
+    margin-top: 5px
+}

@@ -1,0 +1,19 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="isExpand" type="boolean" default="false"/> 
+    <aura:attribute name="isEnableClickToDial" type="boolean" default="false"/> 
+    <aura:attribute name="screenPop" type="Aura.Action" />
+    
+    <c:phone
+             onexpand="{! c.onExpand}"
+             isExpand="{!v.isExpand}"
+             isEnableClickToDial="{!v.isEnableClickToDial}"
+             oncollapse="{! c.onCollapse}" 
+             onopenphonebar="{! c.onOpenPhoneBar}" 
+             ondisableclicktodial="{! c.disableClickToDial}"
+             onenableclicktodial="{! c.enableClickToDial}"
+             onnavigateto="{! c.navigateTo}"
+             aura:id="phonecmp"
+             >
+    </c:phone>
+</aura:component>

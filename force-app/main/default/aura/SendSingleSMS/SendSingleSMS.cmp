@@ -1,0 +1,72 @@
+<!--
+* @description       : The Class for Log
+* @author            : DTDuong - GMS
+* @last modified on  : 2024.04.03
+* @last modified by  : Dinh Tung Duong(dtduong@gimasys.com)
+* @history           :    date                    author                      content
+*
+ -->
+<aura:component controller="SendSingleSMS_Ctrl" Implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction,force:hasSObjectName" access="global">
+    <aura:attribute name="smsContent" type="String" />
+    <aura:attribute name="smsContentTemplate" type="String" />
+    <aura:attribute name="is_Edit_Sms" type="boolean" default="false" />
+    <aura:attribute name="is_Send_Sms" type="boolean" default="true" />
+    <aura:attribute name="SMS_Opt_Out" type="boolean" default="false" />
+    
+    <aura:attribute name="listSMSGateways" type="List" default="[{'label': 'VietGuys', 'value': 'VietGuys'}]"/>
+    <aura:attribute name="ChooseSMSGateway" type="String" default="VietGuys"/>
+    <aura:attribute name="phone" type="String" default=""/>
+    <aura:attribute name="customerCode" type="String" default=""/>
+    
+    <aura:attribute name="listEmailTemplate" type="List" default="[]"/>
+    <aura:attribute name="ChooseEmailTemplate" type="String" />
+    
+    <aura:attribute name="listRequestFrom" type="List"/>
+    <aura:attribute name="chooseRequestFrom" type="String" default="Eplus"/>
+    
+    <aura:attribute name="Spinner" type="boolean" default="false"/>
+    <aura:handler name='init' value='{!this}' action='{!c.doInit}' />
+    
+    <aura:attribute name="isUsingParam" type="Boolean" default="false"/>
+    <aura:attribute name="smsDate" type="Object" default=""/> 
+    <aura:attribute name="smsTime" type="Object" default=""/>
+    <aura:attribute name="Amount" type="Object" default=""/>
+    <aura:attribute name="CustomerName" type="Object" default=""/>
+    <aura:attribute name="ServiceName" type="Object" default=""/>
+    <aura:handler name="cmpEventSmsSingleClose" event="c:CloseToast_SingleSMS_Evt" action="{!c.cancel}"/>
+    <aura:attribute name="sobjecttype" type="String" default="{!v.sObjectName}"/>
+    <div>
+        <aura:if isTrue="{!v.Spinner}">
+            <div class="demo-only demo-only demo-only_viewport demo--inverse" style="height:6rem">
+                <div class="slds-spinner_container slds-is-fixed">
+                    <div role="status" class="slds-spinner slds-spinner_medium slds-spinner_brand">
+                        <span class="slds-assistive-text">Loading</span>
+                        <div class="slds-spinner__dot-a"></div>
+                        <div class="slds-spinner__dot-b"></div>
+                    </div>
+                </div>
+            </div>
+        </aura:if>
+        
+        
+        <aura:if isTrue="{!v.SMS_Opt_Out}">
+            Record is check SMS Opt Out
+            <aura:set attribute="else">
+                
+                <div class="slds-grid slds-gutters" style="margin-top: 10px;">
+                    </div>
+                
+                <lightning:combobox name="EmailTemplate" label="SMS mẫu" value="{!v.ChooseEmailTemplate}" options="{! v.listEmailTemplate }" onchange="{! c.handleChangeTemplate }" placeholder="Chọn SMS mẫu" disabled="{!!v.is_Send_Sms}" /> 
+                
+                <lightning:textarea aura:id="smscontent" name="smscontent" value="{!v.smsContent}" label="Nội dung SMS" 
+                                    placeholder="Nhập nội dung" onchange="{! c.handleChangeContent }"/>
+                
+                <Center>
+                    <lightning:button class=".slds-modal__close" label="Gửi SMS" title="Send SMS"
+                                      onclick="{! c.callSendSMS }" disabled="{!!v.is_Send_Sms}" />
+                </Center>
+            </aura:set>
+        </aura:if> 
+        <c:CustomToast_SMS aura:id="toastCmp" customTimeToastClose = "true" autoCloseTime ="30000"/>
+    </div>
+</aura:component>

@@ -1,0 +1,34 @@
+<template>
+    <div class="phone-keypad">
+        <div class="phone-screen-wrapper">
+          <div class="phone-screen">
+            <input type="text" value={phoneNumber} class="phone-input" oninput={handleChangePhoneNumber}>
+            <template lwc:if={phoneNumber.length}>
+              <lightning-button-icon  icon-name="utility:close" variant="bare" onclick={handleDeletePhoneNumber} class="delete-phone-number"></lightning-button-icon>
+            </template>
+          </div>
+          <template lwc:if={iscollapse}>
+            <lightning-button-icon  icon-name="utility:chevronleft" variant="bare" onclick={handleCollapse} ></lightning-button-icon>
+          </template>
+          <template lwc:else>
+            <lightning-button-icon  icon-name="utility:chevronright" variant="bare"  onclick={handleExpand}></lightning-button-icon>
+          </template>
+        </div>
+        <div class="extension-toggle">
+          <lightning-input  type="toggle" onchange={handleExtension} message-toggle-active="" message-toggle-inactive="" checked={agentStatus} disabled class={classInputToggle}></lightning-input>
+          <span>Extension {nameExtension}</span>
+        </div>
+        <div class="keypad">
+          <template for:each={numberKey} for:item="num">
+            <div key={num} class="key">
+              <button class="key-btn" onclick={handleKeyPress} data-key={num}>{num}</button>
+            </div>
+          </template>
+          <div class="key-row">
+            <button class="btn-border-radius call-btn" onclick={handleMakeCall} disabled={disabledMakeCall}>
+              <lightning-icon icon-name="utility:call" alternative-text="Call" title="Call"  size="small"></lightning-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+</template>

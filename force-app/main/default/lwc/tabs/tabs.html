@@ -1,0 +1,27 @@
+<template>
+    <div class="slds-tabs_default tabs-wrapper">
+        <ul class="slds-tabs_default__nav slds-border_bottom" role="tablist">
+        <template for:each={tabs} for:item="tab">
+            <li key={tab.id}
+            class={tab.linkClass}
+            data-tab-id={tab.value}
+            onclick={handleTabClick}
+          >
+            <a
+              class="slds-tabs_default__link"
+              href="#"
+              role="tab"
+              aria-selected="true"
+              aria-controls="tab-default-1"
+            >
+              <span class="slds-tabs__left-icon">
+                <lightning-icon icon-name={tab.iconName} size="small"></lightning-icon>
+              </span>
+              {tab.label}
+            </a>
+          </li>
+        </template>
+    </ul>
+    <slot></slot>
+</div>
+</template>

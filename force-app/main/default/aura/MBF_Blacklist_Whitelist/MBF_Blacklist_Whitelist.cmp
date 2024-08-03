@@ -1,0 +1,75 @@
+<aura:component controller="MBF_APICall_Blacklist_Whitelist" implements="force:appHostable,force:lightningQuickActionWithoutHeader,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global">
+    <aura:html tag="style">
+        .slds-modal__container {
+            max-width: 65vw !important;
+            width: 65vw !important;
+        }
+        .cuf-content {
+            padding: 0 0rem !important;
+        }
+        .slds-p-around--medium {
+            padding: 0rem !important;
+        	min-height: 315px !important;
+        }
+        
+    </aura:html>
+    
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="opportunityWrapper" type="MBF_APICall_Blacklist_Whitelist.OppWrapper" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    
+    <div class="slds-modal__header">
+        <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Danh sách gói cước Blacklist - Whitelist của thuê bao: {!v.opportunityWrapper.Opportunities[0].Phone_Display__c}</h1>
+    </div>
+    
+    <div class="slds-modal__container" style="background: white; padding-left:2%; padding-right:2%; padding-top:0% !important;">
+        <br></br>
+        <div class="slds-grid slds-wrap slds-p-horizontal_small slds-p-vertical_medium">
+            <div class="slds-col slds-size_1-of-2">
+                <div class="slds-size--1-of-1 slds-large-size--1-of-1 slds-p-top_medium">
+                    <label class="vna-text_h5 h5--OpenSans-Regular">
+                        Danh sách gói cước Blacklist 
+                    </label>
+                </div>
+                <div class="slds-size--1-of-1 slds-large-size--1-of-1 slds-p-top_medium">
+                    <label class="vna-text_h5 h5--OpenSans-Regular" style="padding-left: 35px;">
+                        Blacklist: 
+                    </label>
+                    <aura:iteration items="{!v.opportunityWrapper.Blacklist}" var="item" indexVar="index">
+                        {!item}
+                        <!-- Kiểm tra xem có phải phần tử cuối cùng không -->
+                        <aura:if isTrue="{!index != v.opportunityWrapper.Blacklist.length - 1}">
+                            , <!-- In dấu phẩy nếu không phải phần tử cuối cùng -->
+                        </aura:if>
+                    </aura:iteration>
+                </div>
+            </div>
+            
+            <div class="slds-col slds-size_1-of-2">
+                <div class="slds-size--1-of-1 slds-large-size--1-of-1 slds-p-top_medium">
+                    <label class="vna-text_h5 h5--OpenSans-Regular">
+                        Danh sách gói cước Whitelist
+                    </label>
+                </div>
+                <div class="slds-size--1-of-1 slds-large-size--1-of-1 slds-p-top_medium">
+                    <label class="vna-text_h5 h5--OpenSans-Regular" style="padding-left: 35px;">
+                        Whitelist: 
+                    </label>
+                    <aura:iteration items="{!v.opportunityWrapper.Whitelist}" var="item" indexVar="index">
+                        {!item}
+                        <!-- Kiểm tra xem có phải phần tử cuối cùng không -->
+                        <aura:if isTrue="{!index != v.opportunityWrapper.Whitelist.length - 1}">
+                            , <!-- In dấu phẩy nếu không phải phần tử cuối cùng -->
+                        </aura:if>
+                    </aura:iteration>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="slds-modal__footer">
+        <button class="slds-button slds-button--brand" onclick="{!c.closeModal}">Đóng</button>
+    </div>
+</aura:component>

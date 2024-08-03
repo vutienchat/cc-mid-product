@@ -1,0 +1,14 @@
+<template>
+    <lightning-card>
+        <div if:true={showLoadingSpinner} class="exampleHolder">
+            <lightning-spinner alternative-text="Loading" size="xx-small"></lightning-spinner>
+        </div>
+        <div class="file-uploader">
+            <lightning-input label="" name="file uploader" onchange={handleFilesChange} type="file"
+                multiple></lightning-input>
+            <div class="error-message">{fileName}</div>
+            <lightning-button class="upload-button" label={UploadFile} onclick={handleSave} variant="brand"
+                disabled={isTrue}></lightning-button>
+        </div>
+    </lightning-card>
+</template>

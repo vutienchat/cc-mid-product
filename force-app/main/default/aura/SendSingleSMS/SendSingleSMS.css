@@ -1,0 +1,14 @@
+/* * @description       : The Class for Log
+* @author            : DTDuong - GMS
+* @last modified on  : 2024.04.03
+* @last modified by  : Dinh Tung Duong(dtduong@gimasys.com)
+* @history           :    date                    author                      content
+* */
+
+
+.THIS .slds-textarea {
+    height:150px !important;
+}
+.THIS button.slds-button.slds-button_brand {
+    float: right;
+}

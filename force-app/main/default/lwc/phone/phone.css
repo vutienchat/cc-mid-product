@@ -1,0 +1,58 @@
+:host {
+    height: 100%;
+}
+
+.remoteView{
+    display: none;
+}
+
+.lightning-tabset{
+    --slds-c-tabs-list-color-border:#c9c9c9;
+    height: 100%;
+}
+
+.lightning-tab-wrapper{
+    height: 100%;
+    display: grid;
+
+}
+
+.layout-phone-content-wrapper{
+    display: none;
+}
+
+.layout-phone-content-wrapper.show{
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid #c9c9c9;
+}
+
+.phone-layout{
+    display: grid;
+    grid-template-columns: 328px 1fr; 
+    height: 100%;
+}
+
+.custom-box {
+    border: 1px solid #c9c9c9;
+}
+
+.layout-phone-wrapper{
+    position: relative;
+}
+
+.layout-phone{
+    position: sticky;
+    height: 100%;
+    inset: 0;
+    height: 454px;
+}
+
+.wrapper-msg{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 10px;
+}

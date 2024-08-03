@@ -1,0 +1,38 @@
+.THIS{
+    margin: 0px auto;
+    width: 100%;
+    font-family: OpenSans-Regular;
+    font-size: 13px;
+    min-height: 100vh;
+}
+
+.THIS.survey .info,
+.THIS.survey .title,
+.THIS.survey .question{
+    border: 1px solid rgb(218, 220, 224);
+    border-radius: 10px;
+}
+.THIS.survey{
+    max-width: 700px;
+    justify-content: center;
+	align-items: center;
+}
+
+.THIS h2{
+    font-weight: bold;
+    justify-content: center;
+	align-items: center;
+    font-size: 13px;
+    display:grid;
+}
+.THIS.info{
+    width:100%;
+}
+
+.THIS label{
+    font-weight: bold;
+}
+
+.THIS.slds-p-around_medium{
+    border: 1px solid black;
+}

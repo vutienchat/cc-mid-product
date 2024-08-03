@@ -1,0 +1,58 @@
+<aura:component controller="R1_ContactTag" implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global" >
+    
+    <aura:attribute name="name" type="String" default=""/>
+    <aura:attribute name = "listItem" type="List"/>
+    <aura:attribute name="recordId" type="String" />
+    
+    <aura:handler name='init' value='{!this}' action='{!c.doInit}' />
+    
+    <div class="slds-card slds-card_boundary">
+        <div class="slds-page-header">
+            <div class="slds-page-header__row">
+                <div class="slds-page-header__col-title">
+                    <div class="slds-media slds-media--center slds-has-flexi-truncate">
+                        <div class="slds-media__figure">
+                            <span class="slds-icon_container slds-icon-standard-opportunity" title="opportunity">
+                                <lightning:icon iconName="standard:contact" alternativeText="Tags" title="Tags" size="small"/>
+                                <span class="slds-assistive-text">Tags</span>
+                            </span>
+                        </div>
+                        <div class="slds-media__body">
+                            <div class="slds-page-header__name">
+                                <div class="slds-page-header__name-title">
+                                    <h1>
+                                        <span class="slds-page-header__title slds-truncate" title="Tags">Tags</span>
+                                    </h1>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="slds-no-flex">
+                            <button class="slds-button slds-button_neutral">Sync</button>
+                        </div>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="slds-card__body slds-card__body_inner card_info">
+            <div class="item-info slds-size--1-of-1 slds-large-size--1-of-1">
+                
+                <c:R1_CustomLookupTag aura:id = "lookupTag"
+                                      objectAPIName="meta_tag__c" 
+                                      IconName="standard:contact"
+                                      requiredField="false"
+                                      result="{!v.name}"
+                                      recordId="{!v.recordId}"
+                                      lstTags="{!v.listItem}"
+                                      />
+                    
+                </div>
+            
+            <div class="slds-p-top_medium slds-p-right_medium">
+                <aura:iteration items="{!v.listItem}" var="item" indexVar="index">
+                    <lightning:pill label="{!item.Tag__r.Name}" onremove="{! c.handleRemove }"/>
+                </aura:iteration>
+            </div>
+        </div>
+    </div>
+</aura:component>

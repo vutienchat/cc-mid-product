@@ -1,0 +1,52 @@
+<template>
+    <div class="slds-text-heading_medium slds-text-align_center tab-title">Thống kê cuộc gọi</div>
+    <div class="call-statistic-filter">
+      <lightning-icon icon-name="utility:filterList" size="small" class="call-statistic-filter-label"></lightning-icon>
+      <lightning-select
+            name="tickets"
+            label=""
+            value={filter.state}
+            options={options}
+            class="select-call-statistic"
+            onchange={handleChangeTypeCall}
+        >
+      </lightning-select>
+    </div>
+    <div class="table-wrapper" onscroll={handleScrollTable}>
+        <table class="table-sticky">
+            <thead>
+                <tr>
+                  <th class="header-cell">STT</th>
+                  <th class="header-cell">Tên người gọi</th>
+                  <th class="header-cell">Số điện thoại</th>
+                </tr>
+              </thead>
+            <tbody>
+              <template for:each={calls} for:item="call" for:index="index">
+                    <tr class="table-row" key={call.callTime}>
+                      <td class="table-cell">
+                        <span class="row-index"></span>
+                      </td>
+                      <td class="table-cell">{call.name}</td>
+                      <td class="table-cell">
+                        <span>{call.phoneNumber}</span>
+                        <c-button-clipboard value={call.phoneNumber}></c-button-clipboard>
+                      </td>
+                    </tr>
+              </template>
+              <template if:true={loading}>
+                <template for:each={rowsLoading} for:item="row">
+                  <tr class="table-row" key={row}>
+                    <td class="table-cell"><span class="placeholder-table"></span></td>
+                    <td class="table-cell"><span class="placeholder-table"></span></td>
+                    <td class="table-cell"><span class="placeholder-table"></span></td>
+                  </tr>
+                </template>
+              </template>
+            </tbody>
+          </table>
+          <template if:true={isEmpty}>
+            <p class="table-empty">No items to display.</p>
+          </template>
+    </div>
+</template>

@@ -1,0 +1,13 @@
+<aura:component controller="R1_ClickToDialController" implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader,force:appHostable,lightning:isUrlAddressable" access="global">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <aura:attribute name = "recordId" type="String"/>
+    <aura:attribute name = "recordError" type="String"/>
+    <aura:attribute name = "recordInfo" type="Object" />
+    <aura:attribute name = "phoneNumber" type="String"/>
+    
+    <lightning:utilityBarAPI aura:id="utilitybar"/>
+    <lightning:clickToDialService aura:id="clickToDialService"/>
+    
+    <p>Đang gọi đến số <lightning:clickToDial aura:id="clickToDialCmp" value="{!v.phoneNumber}" /></p>
+</aura:component>

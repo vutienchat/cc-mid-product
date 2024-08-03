@@ -1,0 +1,75 @@
+<aura:component controller="R1_CustomAddProductInOrderController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    
+    <aura:attribute name="isModelBoxOpen" type="boolean" default="false"/>
+    <aura:attribute name="optionsRecordType" type="List"/>
+    <aura:attribute name="dataProduct" type="Object"/>
+    <aura:attribute name="data" type="Object"/>
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="rawDataProduct" type="Object" />
+    <aura:attribute name="activeFilter" type="string" default="all" />
+    <aura:attribute name="spinner" type="boolean" default="false"/>
+    <aura:attribute name="showTable" type="boolean" default="false"/>
+    <aura:attribute name="disableButton" type="boolean" default="true"/>
+    <aura:attribute name="selectedProduct" type="Product2[]"/>
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="recordTypeId" type="String" />
+
+    
+    <lightning:card footer="">
+        
+        <div style="margin-left:10px ;margin-right:10px">
+            <lightning:button class = "full-width" variant="brand"
+                              label="Thêm sản phẩm"
+                              title="Thêm sản phẩm"
+                              onclick="{! c.openModelAddProduct }"/>
+        </div>
+        
+    </lightning:card>
+    
+     <aura:if isTrue="{!v.isModelBoxOpen}">    
+    <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_small">
+            <div class="slds-modal__container">
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick="{! c.closeModal }">
+                    <lightning:icon iconName="utility:close" alternativeText="Close" title="Close" />
+                    <span class="slds-assistive-text">Cancel and close</span>
+                </button>
+                <div class="slds-modal__header">
+                    <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Thêm sản phẩm</h1>
+                </div>
+
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" >
+                    <lightning:combobox name="progress" label="Chọn loại sản phẩm"  placeholder="Chọn loại sản phẩm" options="{! v.optionsRecordType }" onchange="{! c.handleChangeRecordType }"/>
+                
+                <aura:if isTrue="{!v.spinner}">
+                    <div aura:id="spinnerId" class="slds-spinner_container">
+                        <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                            <span class="slds-assistive-text">Loading...</span>
+                            <div class="slds-spinner__dot-a"></div>
+                            <div class="slds-spinner__dot-b"></div>
+                        </div>
+                    </div>
+                </aura:if>
+                
+                <aura:if isTrue="{!v.showTable}">
+                <div style="height: 300px; margin-top:20px">
+                    <span style="margin-bottom:5px">
+                        <lightning:input onchange="{!c.searchTable}" type="search" label="Searh" variant="label-hidden" placeholder="Enter search term" aura:id="SearchBox"/>
+                    </span>
+                    <lightning:datatable columns="{! v.columns }"
+                                         data="{! v.dataProduct }"
+                                         keyField="id"
+                                         onrowselection="{! c.selectedRow }"
+                                         />
+                </div>
+                </aura:if>
+                </div>
+                <div class="slds-modal__footer">
+                    <button class="slds-button slds-button_neutral" aria-label="Cancel and close" onclick="{! c.closeModal }">Đóng</button>
+                    <button class="slds-button slds-button_brand" onclick="{! c.handlerAddProductInOpp}" disabled = "{!v.disableButton}">Thêm</button>                    
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>   
+    </aura:if>
+    
+</aura:component>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>59.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>showSlotAgent</masterLabel>
+    <targets>
+        <target>lightning__AppPage</target>
+        <target>lightning__RecordPage</target>
+        <target>lightning__HomePage</target>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+        <target>lightning__FlowScreen</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__FlowScreen">
+            <property name="key" type="String" label="key"></property>
+            <property name="startDate" type="String" label="Ngày bắt đầu"></property>
+            <property name="endDate" type="String" label="Ngày kết thúc"></property>
+            <property name="partner" type="String" label=" Đối tác"></property>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

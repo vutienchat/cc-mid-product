@@ -1,0 +1,66 @@
+@import 'c/cssPhoneLib';
+
+:host{
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+.transfe-call-wrapper{
+   height:100%;
+   display: grid;
+   grid-template-rows: auto auto 1fr ;
+   padding: 10px;
+   background-color: #fff;
+   animation: transfer-call-animation .3s;
+   animation-fill-mode: both;
+}
+
+.transfe-call-content{
+    position: relative;
+    overflow: auto;
+}
+.transfe-call-list{
+    position: absolute;
+    inset: 0;
+}
+
+.transfe-call-list__item{
+    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.list-item-left{
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+@keyframes transfer-call-animation{
+    0%{
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(100%);
+    }
+    100%{
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+}
+
+.btn-close{
+    text-align: right;
+}
+
+.btn-active{
+    --sds-c-icon-color-foreground-default: #28a745;
+}
+
+.workplace-state{
+    font-size: 12px;
+    font-weight: 500;
+    color: #107cad;
+}

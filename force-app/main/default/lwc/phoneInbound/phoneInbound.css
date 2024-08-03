@@ -1,0 +1,82 @@
+@import 'c/cssPhoneLib';
+.phone-inbound-wrapper{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+.info-call{
+    text-align: center;
+    flex: 1;
+}
+
+.name-call{
+    font-size: 20px;
+    font-weight: 500;
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+
+.action-call{
+    display: flex;
+    gap: 100px;
+    margin-bottom: 20px;
+}
+
+.avatar{
+    --lwc-squareIconMediumBoundary:50px;
+    --slds-c-icon-color-background: #f3f7f8;
+    --slds-c-icon-color-foreground: #c3c7c8
+}
+
+.end-call-btn{
+  background-color: #ba0517;
+  --sds-c-icon-color-foreground-default: white;
+  cursor: pointer;
+  animation: phoner-btn-animation 1s infinite ease-in-out;
+}
+
+.call-btn{
+  background-color: #28a745;
+  --sds-c-icon-color-foreground-default: white;
+  cursor: pointer;
+  animation: phoner-btn-animation 1s infinite ease-in-out;
+}
+
+.call-btn:hover{
+    background-color: #218838;
+}
+.btn-transfer{
+    margin-bottom: 50px;
+}
+
+@keyframes phoner-btn-animation{
+  0% {
+    -webkit-transform: rotate(0) scale(1) skew(1deg)
+}
+
+10% {
+    -webkit-transform: rotate(-25deg) scale(1) skew(1deg)
+}
+
+20% {
+    -webkit-transform: rotate(25deg) scale(1) skew(1deg)
+}
+
+30% {
+    -webkit-transform: rotate(-25deg) scale(1) skew(1deg)
+}
+
+40% {
+    -webkit-transform: rotate(25deg) scale(1) skew(1deg)
+}
+
+50% {
+    -webkit-transform: rotate(0) scale(1) skew(1deg)
+}
+
+100% {
+    -webkit-transform: rotate(0) scale(1) skew(1deg)
+}
+}

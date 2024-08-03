@@ -1,0 +1,50 @@
+<!--
+* @description       : The Class for Log
+* @author            : DTDuong - GMS
+* @last modified on  : 2024.04.03
+* @last modified by  : Dinh Tung Duong(dtduong@gimasys.com)
+* @history           :    date                    author                      content
+*
+ -->
+<aura:component >
+    <aura:attribute name="messageType" type="string" default="success"/>
+    <aura:attribute name="message" type="string"/>
+    <aura:attribute name="autoCloseTime" type="Integer" default="5000"/>
+    <aura:attribute name="autoClose" type="Boolean" default="true"/>
+    <aura:attribute name="autoCloseErrorWarning" type="Boolean" default="true"/>
+    <aura:attribute name="customTimeToastClose" type="Boolean" default="false"/>
+    
+    <aura:registerEvent name="cmpEventSmsMassClose" type="c:CloseToast_SMS_Evt"/>
+    <aura:registerEvent name="cmpEventSmsSingleClose" type="c:CloseToast_SingleSMS_Evt"/>
+    
+    <lightning:notificationsLibrary aura:id="notifLib"/>
+
+    <aura:method name="showToastModel" action="{!c.showToast}" access="public">
+        <aura:attribute name="message" type="String" access="public"/>
+        <aura:attribute name="messageType" type="String" access="public"/>
+    </aura:method>
+    
+    <div aura:id="toastModel" style="min-height: 90px; " class="slds-hide">
+        <section role="dialog" style="padding-bottom: 400px;" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container" style="width: 480px !important;">
+                <div class="{!'slds-notify slds-notify_toast slds-theme_'+v.messageType}" role="status">
+                    <span class="slds-assistive-text">{!v.messageType}</span>
+                    <span class="{!'slds-icon_container slds-icon-utility-'+v.messageType+' slds-icon-utility-success slds-m-right_small slds-no-flex slds-align-top'}" title="{!v.message}">
+                        <lightning:icon iconName="{!'utility:'+v.messageType}" size="small" variant="inverse" styleclass="slds-icon slds-icon_small"/>
+                    </span>
+                    <div class="slds-notify__content">
+                        <h2 class="slds-text-heading_small ">{!v.message}</h2>
+                    </div>
+                    <div class="slds-notify__close">
+                        <button class="slds-button slds-button_icon slds-button_icon-inverse" title="Close" onclick="{!c.closeModel}">
+                            <lightning:icon iconName="utility:close" size="small" variant="inverse"/>
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                    </div>      
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+        
+    </div> 
+</aura:component>

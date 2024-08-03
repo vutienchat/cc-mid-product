@@ -1,0 +1,11 @@
+.THIS .slds-cell_edit {
+    overflow: visible !important; /* Đảm bảo nội dung không bị cắt */
+}
+
+.THIS .slds-table_header-fixed {
+    white-space: nowrap; /* Ngăn ngừa việc xuống dòng trong tiêu đề cột */
+}
+
+.THIS .slds-text-title_caps {
+    white-space: nowrap; /* Ngăn ngừa việc xuống dòng trong tiêu đề cột */
+}

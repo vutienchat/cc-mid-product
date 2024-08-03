@@ -1,0 +1,93 @@
+<template>
+  <template if:true={connecting}>
+    connecting...
+  </template>
+  <template if:false={connecting}>
+    <template if:true={connected}>
+        <lightning-layout vertical-align="stretch" multiple-rows="true" class='phone-layout'>
+            <lightning-layout-item class="layout-phone-wrapper">
+              <div class="layout-phone">
+                <template if:true={isDialpad}>
+                  <c-dialpad 
+                    onmakecall={handleMakeCall} 
+                    phone-number={phoneNumber}
+                    onchangephonenumber={handleChangePhoneNumber}
+                    onchangekeypress={handleChangeKeyPress}
+                    oncollapse={handleCollapse}
+                    onexpand={handleExpand}
+                    iscollapse={isExpand}
+                    agent-status={agentStatus}
+                    >
+                </c-dialpad>
+                </template>
+                <template if:true={isCalling}>
+                  <c-phone-calling
+                   call-info={callInfo} 
+                   onuncalling={handleUnCalling} 
+                   ontoggletransfercall={handleToggleTransferCall} 
+                   is-accepted-call={isAcceptedCall} 
+                   pendding-outbound-call={penddingOutboundCall}
+                   current-call={currentCall}>
+                  </c-phone-calling>
+                </template>
+                <template if:true={isInbound}>
+                  <c-phone-inbound 
+                  call-info={callInfo} 
+                  onanswercall={handleAnswerCall} 
+                  onuncalling={handleUnCalling} 
+                  ontoggletransfercall={handleToggleTransferCall}>
+                </c-phone-inbound>
+                </template>
+                <template if:true={isTransferCall}>
+                  <c-transfer-call ontoggletransfercall={handleToggleTransferCall} ontransfercall={handleTransferCall} agent={agent}></c-transfer-call>
+                </template>
+              </div>
+            </lightning-layout-item>
+            <lightning-layout-item class={getClass}>
+                <c-tabs>
+                    <c-custom-tab  icon-name='standard:metrics' label='Thống kê' value='statistics'>
+                      <c-call-statistics agent-id={user.agentId} is-enable-click-to-dial={isEnableClickToDial}></c-call-statistics>
+                    </c-custom-tab>
+                    <c-custom-tab  icon-name='standard:voice_call' label='Hàng đợi' value='queueList'>
+                      <c-queue-list agent-id={user.agentId}></c-queue-list>
+                    </c-custom-tab>
+                    <template if:true={showTabInfo}>
+                      <c-custom-tab label="Thông tin" icon-name="standard:portal_roles" value="personalInfo">
+                        <c-personal-information call-info={callInfo} call-account={callAccount}></c-personal-information>
+                      </c-custom-tab>
+                    </template>
+                    <template if:true={isServicesManager}>
+                      <c-custom-tab label="Quản lý" icon-name="standard:log_a_call" value="whisper">
+                        <c-management-call device={device} onsupervisormakecall={handleSupervisorMakeCall}></c-management-call>
+                      </c-custom-tab>
+                    </template>
+                </c-tabs>
+            </lightning-layout-item>
+              
+              <!-- <lightning-layout-item  class="slds-border_left layout-phone-content-wrapper">
+                  <lightning-tabset class="lightning-tabset" active-tab-value={activeTab}>
+                      <lightning-tab label="Thống kê" icon-name="standard:metrics" value="statistics" class="lightning-tab-wrapper">
+                        <c-call-statistics></c-call-statistics>
+                      </lightning-tab>
+                      <lightning-tab label="Hàng đợi" icon-name="standard:voice_call" value="queueList" class="lightning-tab-wrapper">
+                          <c-queue-list></c-queue-list>
+                      </lightning-tab>
+                      <template if:true={showTabInfo}>
+                        <lightning-tab label="Thông tin" icon-name="standard:portal_roles" value="personalInfo">
+                          <c-personal-information call-info={callInfo} call-account={callAccount}></c-personal-information>
+                        </lightning-tab>
+                      </template>
+                  </lightning-tabset>
+              </lightning-layout-item> -->
+        </lightning-layout>
+        <video class="remoteView" plays-inline auto-play muted></video>
+        <c-phone-toast is-ringing={isRinging} onactions={handleOpenMuted}></c-phone-toast>
+    </template>
+      <template if:false={connected}>
+        <div class="wrapper-msg">
+          <div style="color: #5c5c5c" class="slds-text-align_center">{message}</div>
+          <lightning-button onclick={handleRetry} label="Thử lại" variant="brand"></lightning-button>
+        </div>
+    </template>
+  </template>
+</template>

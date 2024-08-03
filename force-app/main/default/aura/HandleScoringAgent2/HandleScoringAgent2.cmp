@@ -1,0 +1,107 @@
+<!--
+* @description       : The AuraComponent for Handle Point Agent 2
+* @author            : DTDuong - GMS
+* @last modified on  : 2024.04.20
+* @last modified by  : Dinh Tung Duong(dtduong@gimasys.com)
+* @history           :    date                    author                      content
+-->
+
+
+<aura:component controller="HandleScoringAgent" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global">
+    <aura:attribute name="lockTemplate" type="boolean" default="true"/>
+    <aura:attribute name="sendResult" type="boolean" default="false"/>
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="templateWithQuestion" type="Map" />
+    <aura:attribute name="listTemplate" type="List" default="[]"/>
+    <aura:attribute name="selectedTemplate" type="String"/>
+    <aura:attribute name="listQuestion" type="List" default="[]"/>
+    <aura:attribute name="listGroup" type="List" default="[]"/>
+    <aura:attribute name="listPoint" type="List" default="[
+    {'label': '1', 'value': '1'},
+    {'label': '2', 'value': '2'},
+    ]"/>
+    <aura:attribute name="Spinner" type="boolean" default="false"/>
+    <aura:attribute name="checkPermission" type="boolean" default="true" />
+    <aura:attribute name="checkPermissionResponse" type="boolean" default="true" />
+    <aura:handler name='init' value='{!this}' action='{!c.doInit}' />
+    <!-- Container tag for the iteration -->
+    <aura:attribute name="comment" type="String" default="" />
+    <aura:attribute name="AgentScoringResponse" type="String" default="" />
+	<lightning:notificationsLibrary aura:id="notifLib"/>
+    
+    <div class="customComponent">
+        
+        <lightning:combobox name="Template" label="Template mẫu" value="{! v.selectedTemplate }" onchange="{! c.handleChangeTemplate }" options="{! v.listTemplate }" placeholder="Chọn Template mẫu để chấm điểm" disabled="{!v.lockTemplate}" /> 
+   		
+        <aura:if isTrue="{!v.Spinner}">
+            <div class="demo-only demo-only demo-only_viewport demo--inverse" style="height:6rem">
+                <div class="slds-spinner_container slds-is-fixed">
+                    <div role="status" class="slds-spinner slds-spinner_medium slds-spinner_brand">
+                        <span class="slds-assistive-text">Loading</span>
+                        <div class="slds-spinner__dot-a"></div>
+                        <div class="slds-spinner__dot-b"></div>
+                    </div>
+                </div>
+            </div>
+        </aura:if>
+    	<div class="">
+            <aura:iteration items="{!v.listGroup}" var="itemGroup">
+                <article class="slds-card">
+                    <div class="border-group">
+                        <span>{!itemGroup.label} ({!itemGroup.pointTotal} điểm)</span>
+                    </div>
+                    <div class="slds-col">
+                        <!-- Iterate over listQuestions within itemGroup -->
+                        <aura:iteration items="{!itemGroup.listQuestions}" var="question">
+                            <lightning:input type="checkbox"
+                                             label="{!question.label + ' (' + question.point + ' điểm)'}"
+                                             value="{!question.point}"
+                                             onchange="{!c.handleChange}"
+                                             disabled="{!v.checkPermission}"
+                                             class="item-question"
+                                             checked="{!question.checked}"
+                                             name="{!question.group_type}"
+                                             id="{!question.value}"
+                                     		 />
+                        </aura:iteration>
+                    </div>
+                </article>
+            </aura:iteration>
+            <aura:if isTrue="{!not(empty(v.selectedTemplate))}">
+                <article class="slds-card">
+                    <div class="border-group">
+                        <label class="slds-form-element__label" for="commentSupervior2">Nội dung đánh giá: </label>
+                     </div>   
+                    <ui:inputTextArea aura:id="commentSupervior2" 
+                                      value="{!v.comment}" 
+                                      class="slds-textarea"
+                                      placeholder="Nhập nội dung"
+                                      disabled="{!v.checkPermission}"/>
+                </article>
+                <article class="slds-card">
+                    <div class="border-group">
+                        <label class="slds-form-element__label" for="AgentScoringResponse2">Phản hồi đánh giá: </label>
+                     </div>   
+                    <ui:inputTextArea aura:id="AgentScoringResponse2" 
+                                      value="{!v.AgentScoringResponse}" 
+                                      class="slds-textarea"
+                                      placeholder="Nhập nội dung"
+                                      disabled="{!v.checkPermissionResponse }"/>
+                </article>
+            </aura:if>
+        </div>
+        <aura:if isTrue="{!!v.checkPermission}">
+             <div class="send-button">
+                <lightning:button class="slds-modal__send" label="Hoàn thành" title="Gửi kết quả"
+                          onclick="{! c.sendResultPoint }" disabled="{!v.sendResult}" />
+            </div>
+        </aura:if>
+        <aura:if isTrue="{!!v.checkPermissionResponse}">
+             <div class="send-button">
+                <lightning:button class="slds-modal__send" label="Gửi phản hồi" title="Gửi phản hồi"
+                          onclick="{! c.sendResponse }" disabled="{!v.sendResult}" />
+            </div>
+        </aura:if>
+    </div>
+    
+</aura:component>

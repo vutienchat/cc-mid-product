@@ -1,0 +1,25 @@
+@import 'c/cssPhoneLib';
+
+:host{
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  height: 100%;
+  padding: 0 15px;
+}
+
+.call-statistic-filter-label{
+  margin-top: 15px;
+  --slds-c-icon-color-foreground-default:#4194f9
+}
+
+.select-call-statistic{
+  width: 100%;
+}
+
+.call-statistic-filter{
+  padding:10px 0 ;
+  width: 50%;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}

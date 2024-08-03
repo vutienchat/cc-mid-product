@@ -1,0 +1,442 @@
+<template>
+    <div class="slds-m-around_medium">
+        <lightning-card title="">
+            <div class="slds-grid slds-wrap">
+                <div class="title-custom">
+                    <template lwc:if={asignTwo}>
+                        <div>Giao chấm điểm cấp CTKV</div>
+                    </template>
+                    <template lwc:else>
+                        <div>Giao chấm điểm cấp đối tác</div>
+                    </template>
+                </div>
+                <div class="pd-right-20 fix-button-header">
+                    <template lwc:if={asignTwo}>
+                        <button class="slds-button slds-button_neutral" onclick={handleChangeAsignTime}>Chuyển giao chấm điểm cấp đối tác</button>
+                    </template>
+                    <template lwc:else>
+                        <button class="slds-button slds-button_neutral" onclick={handleChangeAsignTime}>Chuyển giao chấm điểm cấp CTKV</button>
+                    </template>
+                </div>
+            </div>
+        </lightning-card>
+    </div>
+    <div class="slds-m-around_medium">
+        <lightning-card title="">
+            <div class="pd-right-20 fix-button">
+                <button class="slds-button slds-button_neutral" disabled={isLoading} onclick={handleGetDataList}>Tìm kiếm</button>
+                <template lwc:if={asignTwo}>
+                    <button class="slds-button slds-button_neutral" onclick={handleOpenModal2}>Giao chấm điểm 2</button>
+                </template>
+                <template lwc:else>
+                    <button class="slds-button slds-button_neutral" onclick={handleOpenModal}>Giao chấm điểm</button>
+                </template>
+            </div>
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_1-of-4 pd-left-15">
+                    <div class="slds-form-element">
+                        <div class="slds-form-element__control">
+                            <div class="slds-checkbox">
+                                <input type="checkbox" name="options" id="checkbox-task" value="task" onchange={handleCheckboxChange}/>
+                                <label class="slds-checkbox__label" for="checkbox-task">
+                                    <span class="slds-checkbox_faux"></span>
+                                    <span class="slds-form-element__label">Kênh thoại</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-form-element">
+                        <div class="slds-form-element__control">
+                            <div class="slds-checkbox">
+                                <input type="checkbox" name="options" id="checkbox-facebook" value="facebook" onchange={handleCheckboxChange}/>
+                                <label class="slds-checkbox__label" for="checkbox-facebook">
+                                    <span class="slds-checkbox_faux"></span>
+                                    <span class="slds-form-element__label">Facebook</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-form-element">
+                        <div class="slds-form-element__control">
+                            <div class="slds-checkbox">
+                                <input type="checkbox" name="options" id="checkbox-zalo" value="zalo" onchange={handleCheckboxChange}/>
+                                <label class="slds-checkbox__label" for="checkbox-zalo">
+                                    <span class="slds-checkbox_faux"></span>
+                                    <span class="slds-form-element__label">Zalo</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-form-element">
+                        <div class="slds-form-element__control">
+                            <div class="slds-checkbox">
+                                <input type="checkbox" name="options" id="checkbox-chatbot" value="chatbot" onchange={handleCheckboxChange}/>
+                                <label class="slds-checkbox__label" for="checkbox-chatbot">
+                                    <span class="slds-checkbox_faux"></span>
+                                    <span class="slds-form-element__label">Chat bot</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <template if:true={showError.channel}>
+                        <div class="slds-text-color_error">{showError.channel}</div>
+                    </template>
+                </div>
+                <div class="slds-col slds-size_3-of-4">
+                    <label for="">Lựa chọn tiêu chí</label>
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-col slds-size_1-of-3">
+                            <div class="slds-form-element pd-right-20">
+                                <abbr class="slds-required" title="required">* </abbr> 
+                                <label class="slds-form-element__label" for="select-units">Đơn vị:</label>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-select_container">
+                                        <select class="slds-select" id="select-units" data-custom-attribute="unit"  onchange={handleChange}>
+                                            <template for:each={options} for:item="opt">
+                                                <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                            </template>
+                                        </select>
+                                    </div>
+                                </div>
+                                <template if:true={showError.unit}>
+                                    <div class="slds-text-color_error">{showError.unit}</div>
+                                </template>
+                            </div>
+                        </div>
+                        <template if:false={asignTwo}>
+                        <div class="slds-col slds-size_1-of-3">
+                            <div class="slds-form-element pd-right-20">
+                                <!-- <abbr class="slds-required" title="required">* </abbr>  -->
+                                <label class="slds-form-element__label" for="select-team">Tổ:</label>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-select_container">
+                                        <select class="slds-select" id="select-team" data-custom-attribute="team"  onchange={handleChange}>
+                                            <template for:each={optionTeams} for:item="opt">
+                                                <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                            </template>
+                                        </select>
+                                    </div>
+                                </div>
+                                <template if:true={showError.team}>
+                                    <div class="slds-text-color_error">{showError.team}</div>
+                                </template>
+                            </div>
+                        </div>
+                        </template>
+                        <div class="slds-col slds-size_1-of-3">
+                            <div class="slds-form-element pd-right-20">
+                                <label class="slds-form-element__label" for="select-agent">Nhân viên:</label>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-select_container">
+                                        <select class="slds-select" id="select-agent" data-custom-attribute="agent" onchange={handleChange}>
+                                            <template for:each={optionsAgent} for:item="optA">
+                                                <option key={optA.value} value={optA.value}>{optA.label}</option>
+                                            </template>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <template if:false={asignTwo}>
+                            <div class="slds-col slds-size_1-of-3">
+                                <div class="slds-form-element pd-right-20">
+                                    <label class="slds-form-element__label" for="select-agent-level">Cấp bậc nhân viên:</label>
+                                    <div class="slds-form-element__control">
+                                        <div class="slds-select_container">
+                                            <select class="slds-select" id="select-agent-level" data-custom-attribute="agentLevel" onchange={handleChange}>
+                                                <option value="A">Chọn</option>
+                                                <option value="A">A</option>
+                                                <option value="B">B</option>
+                                                <option value="C">C</option>
+                                                <option value="D">D</option>                                
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                        <div class="slds-col slds-size_1-of-3">
+                            <div class="slds-form-element pd-right-20">
+                                <label class="slds-form-element__label" for="select-reason">Loại yêu cầu</label>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-select_container">
+                                        <select class="slds-select" id="select-caseType" data-custom-attribute="caseType"  onchange={handleChange}>
+                                            <template for:each={optionRecordTypeCase} for:item="optR">
+                                                <option key={optR.value} value={optR.value}>{optR.label}</option>
+                                            </template>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-3">
+                            <div class="slds-form-element pd-right-20">
+                                <abbr class="slds-required" title="required">* </abbr>
+                                <label class="slds-form-element__label" for="startTime">Thời gian bắt đầu</label>
+                                <lightning-input class="datetimepicker" max={currentDateTime} variant="label-hidden" value={currentDateTime} type="datetime" data-custom-attribute="timeStart" onchange={handleChange} name="startTime" message-when-range-overflow="Thời gian tìm kiếm không được lớn hơn thời gian hiện tại"></lightning-input>
+                                <template if:true={showError.timeStart}>
+                                    <div class="slds-text-color_error">{showError.timeStart}</div>
+                                </template>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-3">
+                            <div class="slds-form-element pd-right-20">
+                                <abbr class="slds-required" title="required">* </abbr>
+                                <label class="slds-form-element__label" for="endTime">Thời gian kết thúc</label>
+                                <lightning-input class="datetimepicker" variant="label-hidden" value={currentDateTime} type="datetime" data-custom-attribute="timeEnd" onchange={handleChange} name="endTime"></lightning-input>
+                                <template if:true={showError.timeEnd}>
+                                    <div class="slds-text-color_error">{showError.timeEnd}</div>
+                                </template>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-3">
+                            <label class="slds-form-element__label" for="input-3">Thời lượng (s)</label>
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-size_3-of-6 slds-form-element pd-right-20">
+                                    <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+                                        <svg class="slds-icon slds-input__icon slds-input__icon_right slds-icon-text-default"
+                                            aria-hidden="true">
+                                            <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#search"></use>
+                                        </svg>
+                                        <input type="number" min="0" id="timeCall" placeholder="Từ (s)" data-custom-attribute="timeCall" class="slds-input" onchange={handleChange}/>
+                                    </div>
+                                </div>
+                                <div class="slds-col slds-size_3-of-6 slds-form-element pd-right-20">
+                                    <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+                                        <svg class="slds-icon slds-input__icon slds-input__icon_right slds-icon-text-default"
+                                            aria-hidden="true">
+                                            <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#search"></use>
+                                        </svg>
+                                        <input type="number" min="0" id="timeCallEnd" placeholder="Đến (s)" data-custom-attribute="timeCallEnd" class="slds-input" onchange={handleChange}/>
+                                    </div>
+                                    <template if:true={showError.timeCallEnd}>
+                                        <div class="slds-text-color_error">{showError.timeCallEnd}</div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="slds-col slds-size_1-of-3">
+                            <div class="slds-form-element pd-right-20">
+                                <label class="slds-form-element__label" for="input-3">Số cuộc gọi đầu</label>
+                                <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+                                    <svg class="slds-icon slds-input__icon slds-input__icon_right slds-icon-text-default"
+                                        aria-hidden="true">
+                                        <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#search"></use>
+                                    </svg>
+                                    <input type="number" id="numberCall" placeholder="Nhập số" data-custom-attribute="numberCall" class="slds-input" onchange={handleChange}/>
+                                </div>
+                            </div>
+                        </div> -->
+                        <div class="slds-col slds-size_1-of-3">
+                            <div class="slds-form-element pd-right-20">
+                                <label class="slds-form-element__label" for="input-3">Số phần trăm bản ghi</label>
+                                <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+                                    <svg class="slds-icon slds-input__icon slds-input__icon_right slds-icon-text-default"
+                                        aria-hidden="true">
+                                        <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#search"></use>
+                                    </svg>
+                                    <input type="number" max="100" id="percentOfData" placeholder="Nhập số" data-custom-attribute="percentOfData" class="slds-input" onchange={handleChange}/>
+                                    <template if:true={showError.percentOfData}>
+                                        <div class="slds-text-color_error">{showError.percentOfData}</div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                        <template if:true={isTaskChecked}>
+                            <div class="slds-col slds-size_1-of-3">
+                                <div class="slds-form-element pd-right-20">
+                                    <label class="slds-form-element__label" for="select-reason">Mục đích cuộc gọi:</label>
+                                    <div class="slds-form-element__control">
+                                        <div class="slds-select_container">
+                                            <select class="slds-select" id="select-reason" data-custom-attribute="reason"  onchange={handleChange}>
+                                                <template for:each={optionReason} for:item="optR">
+                                                    <option key={optR.value} value={optR.value}>{optR.label}</option>
+                                                </template>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                        <template if:true={isTaskChecked}>
+                            <div class="slds-col slds-size_1-of-3">
+                                <div class="slds-form-element pd-right-20">
+                                    <label class="slds-form-element__label" for="select-types">Loại:</label>
+                                    <div class="slds-form-element__control">
+                                        <div class="slds-select_container">
+                                            <select class="slds-select" id="select-types" data-custom-attribute="type"  onchange={handleChange}>
+                                                <template for:each={optionsType} for:item="optT">
+                                                    <option key={optT.value} value={optT.value}>{optT.label}</option>
+                                                </template>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                        <template if:true={asignTwo}>
+                            <div class="slds-col slds-size_1-of-3">
+                                <div class="slds-form-element pd-right-20">
+                                    <label class="slds-form-element__label" for="select-supervisors">Tìm giám sát viên:</label>
+                                    <div class="slds-form-element__control">
+                                        <div class="slds-select_container">
+                                            <select class="slds-select" id="select-supervisors" data-custom-attribute="supervisor"  onchange={handleChange}>
+                                                <template for:each={optionSupervior} for:item="optS">
+                                                    <option key={optS.value} value={optS.value}>{optS.label}</option>
+                                                </template>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </lightning-card>
+    </div>
+    
+    <!-- Talbe data -->
+    <div class="slds-m-around_medium">
+        <lightning-card class="slds-m-top-x-small">
+            <div class="pd-right-20 pd-left-15 fix-height">
+                <template if:true={isLoading}>
+                    <div class="exampleHolder">
+                        <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+                    </div>
+                </template>
+                <template if:false={isLoading}>
+                    <div class="title-table">
+                        Tổng cộng : {totalCount} bản ghi
+                    </div>
+                    <lightning-datatable
+                        key-field="id"
+                        columns={visibleColumns}
+                        data={dataList}
+                        default-sort-direction={defaultSortDirection}
+                        sorted-direction={sortDirection}
+                        sorted-by={sortedBy}
+                        onsort={onHandleSort}
+                        onrowselection={handleRowSelection}>
+                    </lightning-datatable>
+                </template>
+            </div>
+        </lightning-card>
+    </div>
+    
+    <!-- Modal giao chấm điêm -->
+    <template if:true={isModalOpen}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={handleCloseModal}>
+                        <lightning-icon icon-name="utility:close" alternative-text="close" size="small"></lightning-icon>
+                        <span class="slds-assistive-text" onclick={handleCloseModal}>Close</span>
+                    </button>
+                    <h2 class="slds-text-heading_medium">Giao chấm điểm</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium">
+                    <div class="slds-col">
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-size_1-of-2">
+                                <div class="slds-form-element pd-right-20">
+                                    <label class="slds-form-element__label" for="select-supervior">Chọn người chấm điểm</label>
+                                    <div class="slds-form-element__control">
+                                        <div class="slds-select_container">
+                                            <select class="slds-select" id="select-supervior" data-custom-attribute="supervior" onchange={handleChangeAsign}>
+                                                <template for:each={optionSupervior} for:item="optS">
+                                                    <option key={optS.value} value={optS.value}>{optS.label}</option>
+                                                </template>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <div class="slds-form-element pd-right-20">
+                                    <label class="slds-form-element__label" for="select-template">Chọn biểu mẫu chấm điểm</label>
+                                    <div class="slds-form-element__control">
+                                        <div class="slds-select_container">
+                                            <select class="slds-select" id="select-template" data-custom-attribute="template" onchange={handleChangeAsign}>
+                                                <template for:each={optionTemplate} for:item="optT">
+                                                    <option key={optT.value} value={optT.value}>{optT.label}</option>
+                                                </template>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <div class="slds-form-element pd-right-20">
+                                    <abbr class="slds-required" title="required">* </abbr>
+                                    <label class="slds-form-element__label" for="exprieDate">Ngày hạn chấm điểm</label>
+                                    <lightning-input class="datepicker" variant="label-hidden" value={currentDateTime} type="date" data-custom-attribute="exprieDate" onchange={handleChangeAsign} name="exprieDate"></lightning-input>
+                                    <template if:true={showError.exprieDate}>
+                                        <div class="slds-text-color_error">{showError.exprieDate}</div>
+                                    </template>
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <div class="slds-form-element pd-right-20">
+                                    <label class="slds-form-element__label" for="select-supervior">Chọn người chấm điểm</label>
+                                    <div class="slds-form-element__control">
+                                        <div class="slds-select_container">
+                                            <!-- <c-multi-select
+                                                if:true={optionSupervior} 
+                                                options={optionSupervior}
+                                                onvaluechange={handleValueChange} 
+                                                label="">
+                                            </c-multi-select> -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <footer class="slds-modal__footer">
+                    <button type="button" class="slds-button slds-button_neutral" onclick={handleAssign}>Giao</button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+    <template if:true={isModalOpen2}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={handleCloseModal2}>
+                        <lightning-icon icon-name="utility:close" alternative-text="close" size="small"></lightning-icon>
+                        <span class="slds-assistive-text" onclick={handleCloseModal2}>Close</span>
+                    </button>
+                    <h2 class="slds-text-heading_medium">Giao chấm điểm 2</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium">
+                    <div class="slds-col">
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-size_1-of-2">
+                                <div class="slds-form-element pd-right-20">
+                                    <label class="slds-form-element__label" for="select-supervior">Chọn người chấm điểm 2</label>
+                                    <div class="slds-form-element__control">
+                                        <div class="slds-select_container">
+                                            <select class="slds-select" id="select-supervior-2" data-custom-attribute="supervior" onchange={handleChangeAsign}>
+                                                <template for:each={optionSupervior} for:item="optS">
+                                                    <option key={optS.value} value={optS.value}>{optS.label}</option>
+                                                </template>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <footer class="slds-modal__footer">
+                    <button type="button" class="slds-button slds-button_neutral" onclick={handleAssign2}>Giao</button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>

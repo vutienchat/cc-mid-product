@@ -1,0 +1,25 @@
+<apex:page showHeader="false">
+    <apex:includeLightning />
+    <style type="text/css">
+        body { 
+            margin: 0 !important
+        }
+    </style>
+    <script type="text/javascript" src="/support/api/60.0/lightning/opencti_min.js"></script>
+    
+    <div id="MBFSoftPhone" style="height:100vh;"></div>
+
+    <script type="text/javascript">
+        $Lightning.use("c:AdapterOut", function() {
+            $Lightning.createComponent("c:Adapter", 
+            {screenPop:screenPop},
+            "MBFSoftPhone",
+            function(cmp) {
+            });
+        });
+
+       	function screenPop(id) {
+            sforce.opencti.screenPop({type: sforce.opencti.SCREENPOP_TYPE.SOBJECT, params: {recordId:id} });
+        }
+    </script>
+</apex:page>

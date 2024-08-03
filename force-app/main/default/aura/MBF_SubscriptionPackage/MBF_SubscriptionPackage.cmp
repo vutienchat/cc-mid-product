@@ -1,0 +1,92 @@
+<aura:component controller="MBF_SubscriptionPackage" implements="force:appHostable,force:lightningQuickActionWithoutHeader,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global">
+    <aura:html tag="style">
+        .slds-modal__container {
+            max-width: 65vw !important;
+            width: 65vw !important;
+        }
+        .cuf-content {
+            padding: 0 0rem !important;
+        }
+        .slds-p-around--medium {
+            padding: 0rem !important;
+            min-height: 350px !important;
+        }
+        .slds-spinner_container {
+            height: 37%;
+            margin-top: 23%;
+        }
+        .my-custom-class .slds-modal__container {
+            max-width: 65vw !important;
+            width: 65vw !important;
+        }
+    </aura:html>
+    
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="Spinner" type="boolean" default="false"/>
+    <aura:attribute name="jsonData" type="String" />
+    <aura:attribute name="agencyCode" type="List" default="[]"/>
+    <aura:attribute name="rows" type="List" default="[
+        {'col1':'Mã điểm bán: ', 'col2':'Row 1, Col 2'},
+        {'col1':'Số thuê bao: ', 'col2':'Row 2, Col 2'},
+        {'col1':'Gói cước: ', 'col2':'Row 3, Col 2'},
+        {'col1':'Tài khoản', 'col2':'Row 4, Col 2'},
+        {'col1':'Mật khẩu', 'col2':'', 'editable':true}
+    ]" />
+    
+    <aura:if isTrue="{!v.Spinner}">
+        <div aura:id="spinnerId" class="slds-spinner_container" style="position:fixed;">
+            <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                <span class="slds-assistive-text">Loading...</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </aura:if>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <lightning:overlayLibrary aura:id="overlayLib"/>
+
+    <div class="slds-modal__header">
+        <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Thông tin đăng ký gói cước </h1>
+    </div>
+    
+    <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+        <thead>
+            <tr class="slds-line-height_reset">
+                <th scope="col" style="width: 50px;">
+                    <div class="slds-truncate" title="STT">STT</div>
+                </th>
+                <th scope="col">
+                    <div class="slds-truncate" title="Column 1">Tên trường</div>
+                </th>
+                <th scope="col">
+                    <div class="slds-truncate" title="Column 2">Dữ liệu</div>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <aura:iteration items="{!v.rows}" var="row" indexVar="index">
+                <tr>
+                    <td>
+                        <div class="slds-truncate" title="{!index + 1}">{!index + 1}</div>
+                    </td>
+                    <td>
+                        <div class="slds-truncate" title="{!row.col1}">{!row.col1}</div>
+                    </td>
+                    <td >
+                        <aura:if isTrue="{!row.editable}">
+                            <lightning:input value="{!row.col2}" placeholder="Vui lòng nhập pass"/>
+                            <aura:set attribute="else">
+                                <div class="slds-truncate" title="{!row.col2}">{!row.col2}</div>
+                            </aura:set>
+                        </aura:if>
+                    </td>
+                </tr>
+            </aura:iteration>
+        </tbody>
+    </table>
+    
+    <div class="slds-modal__footer">
+        <button class="slds-button slds-button--brand" onclick="{!c.sendData}">Gửi</button>
+    </div>
+</aura:component>

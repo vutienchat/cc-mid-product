@@ -1,0 +1,9 @@
+<template>
+    {message}
+    <template if:true={isRinging}>
+        <div class='toast-wrapper'>
+            <div class="toast-message">Cho phép đổ chuông</div>
+            <button onclick={handleClick}>Bật</button>
+        </div>
+    </template>
+</template>

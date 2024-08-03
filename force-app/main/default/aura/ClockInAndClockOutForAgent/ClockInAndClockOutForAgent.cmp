@@ -1,0 +1,176 @@
+<aura:component controller="HandleClockInAndClockOutForAgent" implements="force:appHostable,flexipage:availableForAllPageTypes,lightning:availableForFlowScreens,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:attribute name="getCurrentTime" type="String"/>
+    <aura:attribute name="isClockIn" type="boolean" default="false"/>
+    <aura:attribute name="isLogin" type="boolean" default="false"/>
+    <aura:attribute name="isShowLogOut" type="boolean" default="false"/>
+    <aura:attribute name="isShowListAgent" type="boolean" default="false"/>
+    <aura:attribute name="isChooseChannel" type="boolean" default="false"/>
+    <aura:attribute name="isChooseAgent" type="boolean" default="false"/>
+    <aura:attribute name="isAgent" type="boolean" default="false"/>
+    <aura:attribute name="isThoai" type="boolean" default="false"/>
+    <aura:attribute name="isSo" type="boolean" default="true"/>
+    <aura:attribute name="isChooseFull" type="boolean" default="false"/>
+    <aura:attribute name="isShowWarning" type="boolean" default="false"/>
+    <aura:attribute name="workplaceId" type="String"/>
+    <aura:attribute name="isFullSlot" type="boolean" default ="false"/>
+    <aura:attribute name="linkLogin" type="string" default = "https://omnichannel.mobifone.vn/"/>
+    
+    <aura:attribute name="totalTimeWorking" type="String"/>
+    <aura:attribute name="displayDate" type="String"/>
+    <aura:attribute name="selectedAgent" type="String"/>
+    <aura:attribute name="agent" type="Agent__c"/>
+    <aura:attribute name="agentList" type="Agent__c[]"/>
+    <aura:attribute name="extensionNumber" type="String"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="selectedValue" type="String"/>
+     <lightning:card>
+    <aura:if isTrue="{!v.isAgent}">
+       
+        <aura:if isTrue="{!v.isClockIn}">
+            <p style ="Text-align:center; font-weight: 600; font-size:20px; margin-bottom: 20px">Thông tin ca làm việc</p>
+            
+            <aura:if isTrue="{!v.isShowLogOut}">
+                <ui:message title="Thông báo" severity="error" closable="false">
+                    Vui lòng đăng xuất Tổng đài trước khi Kết thúc ca trực
+                </ui:message>
+            </aura:if>
+            
+            <div class="slds-grid slds-gutters">
+                <div class="slds-col slds-size_1-of-3" style="align-items: center;display: flex;">
+                    <span>Tên nhân viên</span>
+                </div>
+                <div class="slds-col slds-size_2-of-3">
+                    <div class="slds-card" style="border: 1px solid #5f5e5e; height:30px; align-items: center;display: flex;">
+                        <div style="margin-left:10px; font-weight: 600;">{!v.agent.Name}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="slds-grid slds-gutters" style ="margin-top:10px">
+                <div class="slds-col slds-size_1-of-3" style="align-items: center;display: flex;">
+                    <span>Mã danh số</span>
+                </div>
+                <div class="slds-col slds-size_2-of-3">
+                    <div class="slds-card" style="border: 1px solid #5f5e5e; height:30px; align-items: center;display: flex;">
+                        <div style="margin-left:10px; font-weight: 600;">{!v.agent.agentCode}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="slds-grid slds-gutters" style ="margin-top:10px">
+                <div class="slds-col slds-size_1-of-3" style="align-items: center;display: flex;">
+                    <span>Thời gian bắt đầu</span>
+                </div>
+                <div class="slds-col slds-size_2-of-3">
+                    <div class="slds-card" style="border: 1px solid #5f5e5e; height:30px; align-items: center;display: flex;">
+                        <div style="margin-left:10px; font-weight: 600;">{!v.displayDate}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="slds-grid slds-gutters" style ="margin-top:10px">
+                <div class="slds-col slds-size_1-of-3" style="align-items: center;display: flex;">
+                    <span>Số giờ làm tạm tính</span>
+                </div>
+                <div class="slds-col slds-size_2-of-3">
+                    <div class="slds-card" style="border: 1px solid #5f5e5e; height:30px; align-items: center;display: flex;">
+                        <div style="margin-left:10px; font-weight: 600;">{!v.totalTimeWorking}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="slds-grid slds-gutters" style ="margin-top:10px">
+                <div class="slds-col slds-size_1-of-3" style="align-items: center;display: flex;">
+                    <span>Kênh</span>
+                </div>
+                <div class="slds-col slds-size_2-of-3">
+                    <div class="slds-card" style="border: 1px solid #5f5e5e; height:30px; align-items: center;display: flex;">
+                        <div style="margin-left:10px; font-weight: 600;">{!v.agent.channel}</div>
+                    </div>
+                </div>
+            </div>
+            <aura:if isTrue="{!v.isSo}">
+                <div class="slds-grid slds-gutters" style ="margin-top:10px">
+                    <div class="slds-col slds-size_1-of-3" style="align-items: center;display: flex;">
+                        <span>Tổng đài số</span>
+                    </div>
+                    <div class="slds-col slds-size_2-of-3">
+                        <div class="slds-card" style="border: 1px solid #5f5e5e; height:30px; align-items: center;display: flex;">
+                            <div style="margin-left:10px; font-weight: 600;">{!v.agent.ExtensionNumber}</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top:10px; text-align:center;font-weight: 700;">
+                    <a style ="text-decoration: underline;color:#8A226F; margin-top:20px" href="{!v.linkLogin}" target = '_blank'>Đường dẫn đăng xuât tổng đài</a>
+                </div> 
+            </aura:if>
+            
+            <div style="Text-align:center; margin-top:10px">
+                <lightning:button variant="destructive" class="btn-clockout" iconName="utility:stop" label="Kết thúc ca trực" value="{!v.agent.Id}" title="Kết thúc ca trực" stretch="true" onclick="{! c.clockOut }"/>
+            </div>
+            <aura:set attribute="else">
+                <aura:if isTrue="{!v.isShowListAgent}">
+                    <aura:if isTrue="{!v.isShowWarning}">
+                        <ui:message title="Thông báo" severity="error" closable="false">
+                            Thông tin đăng nhập chưa chính xác. Vui lòng đăng nhập tổng đài và lựa chọn đúng số bàn {!v.extensionNumber} của bạn
+                        </ui:message>
+                    </aura:if>
+                    <aura:if isTrue="{!v.isFullSlot}">
+                        <ui:message title="Thông báo" severity="error" closable="false">
+                            Hiện tại số bàn làm việc đã hết, vui lòng thử lại sau!
+                        </ui:message>
+                    </aura:if>
+                    
+                    <div style="text-align:center; font-size:20px;font-weight:600">Đăng nhập ca trực</div>
+                    <p style="color:#757575;text-align:center;">Vui lòng kiểm tra thông tin đăng nhập để bắt đầu ca trực</p>
+                    <div style="margin-top:10px">
+                        <lightning:select name="select" label="Nhân viên đăng nhập" value="{v.selectedAgent}" required="true" onchange="{! c.onChangeAgent }">
+                            <option value="0">Chọn một nhân viên đăng nhập...</option>
+                            <aura:iteration items="{!v.agentList}" var="item">
+                                <option value="{!item.Id}">{!item.Name}</option>
+                            </aura:iteration>
+                        </lightning:select>
+                    </div>
+                    <div style="margin-top:10px">
+                        <lightning:select name="select1" label="Chọn kênh làm việc" value="{v.selectedValue}" required="true" onchange="{! c.onChangeValue}" disabled = "{!v.isChooseAgent}">
+                            <option value="0">Chọn một kênh...</option>
+                            <option value="kenhso">Kênh số</option>
+                            <option value="kenhthoai">Kênh thoại</option>
+                        </lightning:select>
+                    </div>
+                    <aura:if isTrue="{!v.isChooseFull}">
+                        <p style="margin-top:10px">Thông tin đăng nhập</p>
+                    <aura:if isTrue="{!v.isThoai}">
+                    <p style="color:#B3B3B3; margin-top:5px">Vui lòng đăng nhập Tổng đài và chọn đúng số bàn</p>
+                    <div class="slds-card" style="border: 1px solid #5f5e5e; height:30px; align-items: center;display: flex; margin-top:5px">
+                        <div style="margin-left:10px; font-weight: 600;">Bàn điện thoại: {!v.extensionNumber}</div>
+                    </div>
+                         <div style="margin-top:20px; text-align:center;font-weight: 700;">
+                            <a style ="text-decoration: underline;color:#8A226F; margin-top:20px" href="{!v.linkLogin}" target = '_blank'>Đường dẫn đăng nhập tổng đài</a> 
+                        </div>  
+                    <aura:set attribute="else">
+                    <div class="slds-card" style="border: 1px solid #5f5e5e; align-items: center;display: flex; margin-top:5px; height:60px">
+                        <div style="margin-left:10px; color:#B3B3B3">Vui lòng bấm “Bắt đầu ca trực” và lựa chọn kênh Omni-Channel để làm việc</div>
+                    </div>
+                        </aura:set>
+                    </aura:if>
+                    <div style="margin-top:20px; color:#F5F5F5">
+                        <lightning:button class="btn-clockin" variant="success" disabled="{!v.isChooseChannel}" label="Bắt đầu ca trực" iconName="utility:play" value="{!v.agent.Id}" title="Bắt đầu ca trực" stretch="true" onclick="{! c.clockIn }"/>
+                    </div>
+                    </aura:if>
+                </aura:if>
+            </aura:set>
+        </aura:if>
+        <aura:set attribute="else">
+            <div style="text-align:center; font-size:20px;font-weight:600">Đăng nhập ca trực</div>
+            <p style="margin-top:10px">Thông tin đăng nhập</p>
+            <div class="slds-card" style="border: 1px solid #5f5e5e; align-items: center;display: flex; margin-top:5px; height:60px">
+                <div style="margin-left:10px; color:#1E1E1E">Hiện chưa có thông tin ca trực vui lòng liên hệ trưởng ca phụ trách để bổ sung thông tin</div>
+            </div>
+            <div style="margin-top:20px; color:#F5F5F5">
+                <lightning:button class="btn-clockin-disable" variant="success" disabled="true" label="Bắt đầu ca trực" iconName="utility:play" value="{!v.agent.Id}" title="Bắt đầu ca trực" stretch="true" onclick="{! c.clockIn }"/>
+            </div>
+        </aura:set>       
+         </aura:if>    
+    </lightning:card>    
+</aura:component>

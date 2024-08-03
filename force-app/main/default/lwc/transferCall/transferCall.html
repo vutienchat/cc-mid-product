@@ -1,0 +1,37 @@
+<template>
+    <div class="transfe-call-wrapper">
+        <lightning-button-icon  icon-name="utility:close" variant="bare" class="btn-close" slot="actions" onclick={handleCloseTransferCall} ></lightning-button-icon>
+        <lightning-input type="search" onchange={handleSearchAgrent} placeholder="Tìm kiếm agent" ></lightning-input>
+        <div class="transfe-call-content">
+            <ul class="transfe-call-list">
+                <template if:true={loading}>
+                    <template for:each={rowsLoading} for:item="row">
+                        <li key={row} class="slds-border_bottom slds-p-vertical_x-small">
+                            <div class="placeholder-table"></div>
+                        </li>
+                    </template>
+                </template>
+                <template if:false={loading}>
+                    <template for:each={users} for:item="user">
+                        <li key={user.Id} class="slds-border_bottom transfe-call-list__item">
+                            <div class="list-item-left">
+                                <lightning-icon class={user.class} icon-name="utility:listen" size="x-small"></lightning-icon>
+                                <div>
+                                    <p style="font-weight: 500;">{user.name}</p>
+                                    <p>{user.agentCode}</p>
+                                    <p>{user.extensionId}</p>
+                                </div>
+                            </div>
+                            <div>
+                                <span class="slds-p-right_small workplace-state">{user.workplaceState}</span>
+                                <lightning-button-icon  icon-name="utility:outbound_call" variant="bare" slot="actions" data-extension-id={user.extensionId} data-transferred-agent-id={user.transferredAgentId} class={user.class}  disabled={user.disabled} onclick={handleTransferCall}></lightning-button-icon>
+                            </div>
+                        </li>
+                    </template>
+                </template>
+                
+            </ul>
+        </div>
+        
+    </div>
+</template>

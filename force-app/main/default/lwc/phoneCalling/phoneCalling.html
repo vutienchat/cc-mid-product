@@ -1,0 +1,30 @@
+<template>
+    <div class="infor-user-calling">
+        <lightning-icon icon-name="action:user" class="avatar" size="large"></lightning-icon>
+        <p class="phone-calling">{callInfo.Name}</p>
+        <p class="phone-nunber-call">
+            {callInfo.Phone}
+            <c-button-clipboard value={callInfo.Phone}></c-button-clipboard>
+        </p>
+        <p class="time-calling">{timeCalling}</p>
+    </div>
+    <div class="wapper-actions-calling">
+        <div class="actions-calling">
+            <button class={getClassMutedByStatus} onclick={handleToggleMutedCall} disabled={disabledActions}>
+                <lightning-icon icon-name={nameIcon} size="x-small"></lightning-icon>
+            </button>
+            <button class={getClassHoldCall} onclick={handleHoldCall} disabled={disabledActions}>
+                <lightning-icon  icon-name="utility:pause" alternative-text="Hold call" title="Hold call"  size="x-small" ></lightning-icon>
+            </button>
+            <button class="btn-border-radius border" onclick={handleOpenTransferCall} disabled={disabledActions}>
+                <lightning-icon icon-name="utility:outbound_call" alternative-text="Transfer call" title="Transfer call"  size="x-small" ></lightning-icon>
+            </button>
+        </div>
+        <p class="slds-text-align_center">{holdCallTime}</p>
+    </div>
+    <div class="end-call">
+        <button class="btn-border-radius end-call-btn"  onclick={handleUnCalling} disabled={penddingOutboundCall}>
+            <lightning-icon icon-name="utility:end_call"  size="small"></lightning-icon>
+        </button>
+    </div>
+</template>

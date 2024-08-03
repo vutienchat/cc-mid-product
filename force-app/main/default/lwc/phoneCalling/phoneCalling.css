@@ -1,0 +1,80 @@
+@import 'c/cssPhoneLib';
+.infor-user-calling{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 50px;
+    height: 50%;
+}
+
+.phone-calling{
+    font-size: 20px;
+    padding: 20px 0 5px 0;
+}
+
+.avatar{
+    --lwc-squareIconMediumBoundary:50px;
+    --slds-c-icon-color-background: #f3f7f8;
+    --slds-c-icon-color-foreground: #c3c7c8
+}
+
+.wapper-actions-calling{
+    height:30%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+}
+
+.actions-calling{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap:25px;
+    /* gap:120px; */
+    
+}
+
+.end-call{
+    display: flex;
+    justify-content: center;
+}
+
+.unmuted-outbound-call-btn{
+    background-color: #fff;
+    color: red;
+    border: 1px solid #ccc;
+
+}
+
+.calling-btn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.end-call-btn {
+    background-color: #ba0517;
+    --sds-c-icon-color-foreground-default: white;
+}
+
+
+.calling-btn:active {
+    transform: scale(0.9);
+}
+
+.active-hold{
+    border-color:  #4194f9 !important;
+    background-color: #4194f9  !important;
+    --sds-c-icon-color-foreground-default: #fff;
+}
+
+.active-muted{
+    border-color:  #ba0517 !important;
+    background-color: #ba0517 !important;
+    --sds-c-icon-color-foreground-default: #fff;
+}

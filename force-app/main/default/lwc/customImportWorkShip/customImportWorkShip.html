@@ -1,0 +1,112 @@
+<template>
+    <lightning-card title="Import ca làm việc">
+        <div class="file-uploader">
+
+            <lightning-combobox name="progress" label="Chọn đối tác khu vực" value={valuePartner}
+            placeholder="Chọn đối tác khu vực" required="true" options={getListPartner}
+            onchange={handleChangePartner} ></lightning-combobox>
+
+            <lightning-combobox name="progress" label="Chọn tháng cần tạo" value={value}
+                placeholder="Chọn tháng làm việc" required="true" options={options}
+                onchange={handleChangeMonth}></lightning-combobox>
+              
+            <div class="error-message">{errorMonth}</div>
+            <lightning-combobox name="progress" label="Chọn năm" required="true" value={valueYear}
+                placeholder="Chọn năm" options={optionsYear} onchange={handleChangeYear}></lightning-combobox>
+            <div class="error-message">{errorYear}</div>
+
+            <lightning-input label="" name="file uploader" onchange={handleFilesChange} type="file"
+                multiple></lightning-input>
+            <div class="error-message">{fileName}</div>
+
+            <lightning-button class="upload-button" label={UploadFile} onclick={handleSave} variant="brand"
+                disabled={isTrue}></lightning-button>
+            <div class="error-message">{errorDuplicate}</div>
+        </div>
+    </lightning-card>
+    <div if:true={isLoaded} class="slds-is-relative">
+        <lightning-spinner alternative-text="Loading..." variant="brand">
+        </lightning-spinner>
+    </div>
+    <div if:false={isLoaded}>
+        <lightning-card title="Thông tin thời gian làm đang quá tải" if:true={data}>
+            <div class="datatable-container" style="max-width: 100%;  max-height: 300px; overflow: auto">
+                <div style="min-width: 100%">
+                    <lightning-datatable data={data} hide-checkbox-column columns={columns} key-field="id" row-number-offset={rowOffset}
+                        default-sort-direction={defaultSortDirection} sorted-direction={sortDirection}
+                        sorted-by={sortedBy} onsort={doSorting}></lightning-datatable>
+                </div>
+            </div>
+            <div class="container">
+                <div class="vertical-center">
+                    <lightning-button variant="success" label="Tạo lại ca trực" title="Successful action"
+                        onclick={handleReupload} style="margin-right:15px"></lightning-button>
+                    <lightning-button if:true={isShowButtonImport} variant="success" label="Tạo ca trực"
+                        title="Successful action" onclick={handleCreateWorkShip}></lightning-button>
+                </div>
+            </div>
+            <p style="margin-left: 10px; font-size:17px; color:red">Lưu ý:</p>
+            <div style="margin-left: 15px;">
+            <span style="font-weight: 600;">Số NV dự kiến:</span><span>&nbsp; Là số nhân viên theo lịch ca trực (file import).</span>
+        </div>
+        <div style="margin-left: 15px;">
+            <span style="font-weight: 600;">Số bàn làm việc khả dụng:</span><span>&nbsp; Là số bàn khả dụng tối đa được phân bố cho đơn vị.</span>
+        </div>
+        <div style="margin-left: 15px;">
+            <span style="font-weight: 600;">Số bàn làm việc còn lại:</span><span>&nbsp; Là số bàn làm việc còn lại có thể được gán cho nhân viên của đơn vị.</span>
+        </div>
+        <div style="margin-left: 15px;">
+            <span>Nếu là số âm, tức là số nhân viên được vượt quá số bàn làm việc hiện có. Cần điều chỉnh lại số lượng nhân viên trong khung thời gian bị vượt.</span>
+        </div>
+        </lightning-card>
+
+        <!--Hiển thị thông tin record bị duplicate-->
+        <lightning-card title="Thông tin các tổng đài viên bị trùng thời gian làm" if:true={dataDuplicate}>
+            <div class="datatable-container" style="max-width: 100%;  max-height: 300px; overflow: auto">
+                <div style="min-width: 100%">
+                    <lightning-datatable data={dataDuplicate} hide-checkbox-column columns={columnsDuplicate} key-field="id" row-number-offset={rowOffset}
+                        default-sort-direction={defaultSortDirection} sorted-direction={sortDirection}
+                        sorted-by={sortedBy} onsort={doSorting}></lightning-datatable>
+                </div>
+            </div>
+            <div class="container">
+                <div class="vertical-center">
+                    <lightning-button variant="success" label="Tạo lại ca trực" title="Successful action"
+                        onclick={handleReuploadShift} style="margin-right:15px"></lightning-button>
+                </div>
+            </div>
+        </lightning-card>
+
+        <template if:true={isShowModal}>
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+                aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <!-- modal header start -->
+                    <header class="slds-modal__header">
+                        <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                            title="Close" onclick={hideModalBox}>
+                            <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse"
+                                size="small"></lightning-icon>
+                            <span class="slds-assistive-text">Đóng</span>
+                        </button>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Xác nhận import
+                        </h2>
+                    </header>
+
+                    <!-- modal body start -->
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <p>Bạn đã import ca làm trong tháng, nếu import đè lên, hệ thống sẽ xóa dữ lệu cũ trong tháng và tạo dữ liệu mới! Xác nhận tạo lại?</p>
+                    </div>
+
+                    <!-- modal footer start-->
+                    <footer class="slds-modal__footer">
+                        <lightning-button  class="slds-button" onclick={hideModalBox} label="Trở về"></lightning-button>
+                        <lightning-button class="upload-button" label="Vẫn tiếp tục" onclick={handleConfirmUpload} variant="brand"></lightning-button>
+                    </footer>
+
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </template>
+    </div>
+</template>

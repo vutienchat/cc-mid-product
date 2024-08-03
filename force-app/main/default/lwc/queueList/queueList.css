@@ -1,0 +1,27 @@
+@import 'c/cssPhoneLib';
+
+:host{
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    height: 100%;
+    padding: 0 15px;
+}
+
+.queue-list-filter{
+   padding:15px 0 ;
+   width: 60%;
+   display: flex;
+   align-items: center;
+   gap: 20px;
+}
+
+.queue-list-filter-label{
+    font-weight: 600;
+    white-space: nowrap;
+    font-size: 15px;
+    margin-top: 15px;
+}
+
+.select-queue-list{
+    width: 100%;
+}

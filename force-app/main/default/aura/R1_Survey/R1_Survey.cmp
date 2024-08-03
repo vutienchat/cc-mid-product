@@ -1,0 +1,138 @@
+<aura:component controller="R1_Survey" implements="forceCommunity:availableForAllPageTypes" access="global">
+    
+    <c:CustomToast_SMS aura:id="toastCmp"/>
+    
+    <aura:attribute name="name" type="String" default=""/>
+    <aura:attribute name="email" type="String" default=""/>
+    <aura:attribute name="phone" type="String" default=""/>
+    <aura:attribute name="recordId" type="String" default=""/>
+    <aura:attribute name="process" type="Boolean" default="false"/>
+    <aura:attribute name="templateName" type="String" default=""/>
+    <aura:attribute name="listItem" type="List" default=""/>
+    <aura:attribute name="lstAsnwer" type="List" default=""/>
+    <aura:attribute name="isSubmited" type="Boolean" default="false"/>
+    <!-- Customer Information -->
+    <aura:attribute name="fields" type="List" default="['firstName', 'lastName']"/>
+    
+    <aura:handler name='init' value='{!this}' action='{!c.doInit}' />
+    <aura:attribute name="value" type="List" default="option1"/>
+    
+    <div class="survey">
+        <!-- Title -->
+        <div class="title" style="border-top: 5px solid #00BCD4; border-left: 5px solid #4285F4">
+            <div class="slds-p-around_medium">
+                <!-- <div class="image-container">
+                    <img src="{!$Resource.MBF_AD }" alt="MBF_A " />
+                </div> -->
+                <div class="image-logo">
+                    <img src="{!$Resource.MBF_Logo }" alt="MBF_Logo " />
+                </div>
+                
+                <h2 class="slds-m-top_medium" >
+                    PHIẾU KHẢO SÁT MỨC ĐỘ HÀI LÒNG CỦA KHÁCH HÀNG
+                </h2>
+            </div>
+        </div>
+        
+        <div class="info slds-m-top_medium slds-p-around_medium"  style="border-left: 5px solid #4285F4"> 
+            <div class="item-info slds-size--1-of-1 slds-large-size--1-of-4" style="width:100%;">
+                <label class="title-input">
+                    Tên khách hàng</label>
+                
+                <lightning:input type = "text" 
+                                 aura:id = "groupfield"
+                                 label=""                                                
+                                 value = "{!v.name}"
+                                 variant="label-hidden"
+                                 disabled="true"
+                                 />
+                
+            </div>
+            
+            <div class="item-info slds-size--1-of-1 slds-large-size--1-of-4 slds-p-top_medium" style="width:100%;">
+                <label class="title-input">
+                    Phone</label>
+                
+                <lightning:input type = "text" 
+                                 aura:id = "groupfield"
+                                 label=""                                                
+                                 value = "{!v.phone}"
+                                 variant="label-hidden"
+                                 disabled="true"
+                                 />
+                
+            </div>
+        </div>
+        <!-- Survey Questions -->
+        <aura:iteration items="{!v.listItem}" var="item" indexVar="index">
+            <div class="question slds-m-top_medium" style="border-left: 5px solid #4285F4">
+                <aura:if isTrue="{!item.multipleAnswer}">
+                    <lightning:checkboxGroup id="{!index}"
+                                             name="Checkbox Group"
+                                             label="{!item.Question}"
+                                             options="{!item.Answer}"
+                                             value="{! v.value }"
+                                             onchange="{! c.handleChange }"
+                                             data-row-index="{!index}"
+                                             class="radio-group slds-p-around_medium"/>
+                    <aura:set attribute="else">
+                        <lightning:radioGroup
+                                              label= "{!item.Question}"
+                                              options="{!item.Answer}"
+                                              value="{!item.result}"
+                                              disabled="{! v.process }"
+                                              required="true"
+                                              type="radio"
+                                              class="radio-group slds-p-around_medium"
+                                              />
+                    </aura:set>
+                    
+                </aura:if> 
+                <aura:if isTrue="{!item.result == 'Không'}">
+                    <!-- Nội dung sẽ hiển thị nếu cả hai điều kiện đều đúng -->
+                    <div class="slds-size--1-of-1 slds-large-size--1-of-2 slds-p-horizontal_medium slds-m-bottom_medium"  style="width:100%;">
+                        <label class="vna-text_h2 h2--Diavlo-Bold vna-title_uper">
+                            Nguyên nhân</label>  
+                        
+                        <lightning:input type = "text" 
+                                         aura:id = "groupfield"
+                                         required = "false"
+                                         label=""                                                
+                                         value = "{!item.reason}" 
+                                         disabled="{! v.process }"
+                                         variant="label-hidden"                            
+                                         class="vna_text"
+                                         />
+                    </div>
+                </aura:if>
+            </div>
+            <aura:if isTrue="{!item.templateName == 'CSAT - CSKH - CL DV TƯƠNG TÁC'}">
+                <div class="question slds-m-top_medium slds-p-top_medium" style="border-left: 5px solid #4285F4">
+                    
+                    <!-- Nội dung sẽ hiển thị nếu cả hai điều kiện đều đúng -->
+                    <div class="slds-size--1-of-1 slds-large-size--1-of-2 slds-p-horizontal_medium slds-m-bottom_medium"  style="width:100%;">
+                        <label class="vna-text_h2 h2--Diavlo-Bold vna-title_uper">
+                            Phản hồi/ Góp ý</label>  
+                        
+                        <lightning:input type = "text" 
+                                         aura:id = "groupfield"
+                                         required = "false"
+                                         label=""                                                
+                                         value = "{!item.reason}" 
+                                         disabled="{! v.process }"
+                                         variant="label-hidden"                            
+                                         class="vna_text"
+                                         />
+                    </div>
+                    
+                </div>
+            </aura:if>
+        </aura:iteration>
+        <!-- Submit Button -->
+        <aura:if isTrue="{!not(v.isSubmited)}">
+            <div class="form-footer-1 slds-p-around_medium">
+                <lightning:button variant="brand" label="Submit" onclick="{!c.handleSubmit}"/>
+            </div>
+        </aura:if>
+    </div>
+</aura:component>

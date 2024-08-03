@@ -1,0 +1,25 @@
+<template>
+    <div class="slds-text-heading_medium slds-text-align_center tab-title">Danh sách hàng đợi</div>
+    <div class="slds-p-bottom_x-large">
+    </div>
+    <div class="table-wrapper">
+      <table class="table-sticky">
+          <thead>
+              <tr>
+                <th class="header-cell">STT</th>
+                <th class="header-cell">Hàng đợi</th>
+                <th class="header-cell">Số lượng cuộc gọi trong hàng đợi</th>
+              </tr>
+            </thead>
+          <tbody>
+              <template for:each={listAgentQueue} for:item="queue">
+                  <tr class="table-row" key={queue.projectName}>
+                    <td class="table-cell"><span class="row-index"></span></td>
+                    <td class="table-cell">{queue.projectName}</td>
+                    <td class="table-cell">{queue.inbound}</td>
+                  </tr>
+              </template>
+            </tbody>
+      </table>
+    </div>
+</template>

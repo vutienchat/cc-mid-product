@@ -1,0 +1,13 @@
+/* SubscriptionPackage.css */
+.THIS table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.THIS th, .THIS td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+.THIS th {
+    background-color: #f4f4f4;
+    text-align: left;
+}
