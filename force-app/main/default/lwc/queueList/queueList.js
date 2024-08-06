@@ -4,6 +4,7 @@ import getListAgentQueue from '@salesforce/apex/MBFPhoneController.getListAgentQ
 export default class QueueList extends LightningElement {
   listAgentQueue=[]
   @api agentId
+  @api activeTab 
 
   getListQueue(){
     getListAgentQueue({agentId:this.agentId}).then((res)=>{
@@ -16,9 +17,12 @@ export default class QueueList extends LightningElement {
       // },1000)
     })
   }
+
   startGetListQueueInterval(){
     return setInterval(()=>{
-      this.getListQueue()
+      if(this.activeTab ==='queueList'){
+        this.getListQueue()
+      }
     },5000)
   }
 

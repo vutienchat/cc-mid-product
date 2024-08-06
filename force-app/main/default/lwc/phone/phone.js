@@ -10,7 +10,6 @@ import ringingInbound from '@salesforce/resourceUrl/ringingInbound';
 
 import getUser from '@salesforce/apex/MBFPhoneController.getUser';
 import updateTask from '@salesforce/apex/MBFPhoneController.updateTask';
-import getPbxCallId from '@salesforce/apex/MBFPhoneController.getPbxCallId';
 import OutboundCall from '@salesforce/apex/MBFPhoneController.OutboundCall';
 import getCallLogByCallId from '@salesforce/apex/MBFPhoneController.getCallLog';
 import saveTransferCall from '@salesforce/apex/MBFPhoneController.saveTransferCall';
@@ -29,16 +28,15 @@ const PERSONAL_INFO= 'personalInfo'
 
 export default class App extends LightningElement {
   @api device = null;
+  @api activeTab
   audioRinging = new Audio(ringingInbound)
   scriptLoaded = false;
-  activeTab
   phoneStatus= PHONE_STATUS.DIALPAD
   connected=false
   isTransferCall=false
   // @track hiddenTabBrowser=false
   @track connecting=true
   @track message=''
-  @track pbxCallId = ''
   @track user=null
   @track isOutboundCall=false
   @track isCalculatingCallTime=false
@@ -142,14 +140,12 @@ export default class App extends LightningElement {
       (async()=>{
         try {
           const user = await getUser()
-          if(user){
+          if(user && user.extensionId && user.agentId){
             this.user=user;
-            const agentStatus = await getAgentStatus({idAgent:user.agentId})
-            this.agentStatus = agentStatus.responseData.agentStatus === '$Cmn_Ready' || 'Outbound'
             const device = agent.getDevice(user.extensionId)
             await device.monitorStart({ rtc: true})
             .then(() =>{
-              this.handleEnableClickToDial()
+              this.handleGetAgentStatus(user.agentId)
               this.connected=true
             })
             .catch(error => {
@@ -175,20 +171,10 @@ export default class App extends LightningElement {
     agent.on('localstream', (event) => {
       //accept call Outbound
       if(this.isOutboundCall && event.stream && !this.isCalculatingCallTime){
-        getPbxCallId({agentId:this.user.agentId}).then(res=>{
-        if(res){
-          const respose = JSON.parse(res)
-          const  pbxCallId = respose?.responseData
-          this.pbxCallId = pbxCallId
-          updateTask({taskId:this.taskId,pbxCallId})
-          const linkage = this.getCall()?.globallyUniqueCallLinkageID
-          this.handleCreateCallRecord(pbxCallId,linkage)
-        }
-        })
-        .catch(err=>{
-          console.log('getPbxCallId', err)
-        })
-        this.handleAcceptCall()
+        const linkAge = this.getCall()?.globallyUniqueCallLinkageID
+        console.log('linkAge Outbound',linkAge)
+          updateTask({taskId:this.taskId,linkAge})
+          this.handleAcceptCall()
       }
     });
 
@@ -210,6 +196,9 @@ export default class App extends LightningElement {
             this.playRingingInbound()
             this.handleOpenPhoneBar()
             this.handleDisableClickToDial()
+            setTimeout(() => {
+             this.handleAnswerCall() 
+            }, 2000);
           }
           break;
         case 'connected':
@@ -247,7 +236,6 @@ export default class App extends LightningElement {
           this.isTransferCall=false;
           this.isCalculatingCallTime= false;
           this.currentCall= null
-          //this.pbxCallId = null
           this.closeRingingInbound();
           this.handleEnableClickToDial();
           this.handleUpdateStatisticCalls();
@@ -255,6 +243,19 @@ export default class App extends LightningElement {
       }
     });
     this.agent= agent
+  }
+
+  handleGetAgentStatus(idAgent){
+    getAgentStatus({idAgent}).then((res)=>{
+      const isReady = res.responseData.agentStatus === ('$Cmn_Ready' || 'Outbound')
+      this.agentStatus = isReady;
+      if(isReady){
+        this.handleEnableClickToDial()
+      }
+    })
+    .catch(err=>{
+      console.log('getAgentStatus', err)
+    })
   }
 
   getInfoCall(Phone){
@@ -270,7 +271,7 @@ export default class App extends LightningElement {
   }
 
   normalizePhoneNumber(phoneNumber) {
-    return phoneNumber.replace(/^(?:\+84|84|0)/, '');
+    return phoneNumber.replace(/^(?:\+84|0084|0)/, '');
   }
 
   handleCreateCallRecord(callId,globallyUniqueCallLinkageID){
@@ -471,23 +472,13 @@ export default class App extends LightningElement {
    if(call?.localConnectionInfo ==='alerting'){
       call.answerCall({audio:true,video:false}).then(()=>{
         this.phoneStatus = PHONE_STATUS.CALLING;
-        let pbxCallId = null
-         getPbxCallId({agentId:this.user.agentId}).then(res=>{
-          if(res){
-            const respose = JSON.parse(res)
-            pbxCallId = respose?.responseData
-            const linkage = call.globallyUniqueCallLinkageID
-            this.pbxCallId = pbxCallId
-            this.handleCreateCallRecord(pbxCallId,linkage)
-            console.log('handleAnswerCall',pbxCallId,linkage)
-          }
-          this.autoCreateCase(this.callInfo.Id, call.number, pbxCallId)
-        })
-        .catch(err=>{
-          console.log('getPbxCallId', err)
-        })
+        const linkage = call.globallyUniqueCallLinkageID
+        console.log('handleAnswerCall linkage',linkage)
+        this.autoCreateCase(this.callInfo.Id, call.number, linkage)
+        setTimeout(() => {
+          this.handleUnCalling() 
+         }, 10000);
       })
-      this.phoneStatus=PHONE_STATUS.CALLING
    }
   }
 
@@ -508,11 +499,10 @@ export default class App extends LightningElement {
         transferredAgentId,
         linkageCallId: call.globallyUniqueCallLinkageID,
         callerNumber: extensionId,
-        pbxCallId: this.pbxCallId
+        pbxCallId: ''
       }
-      saveTransferCall({body:JSON.stringify(body)}).then(res=>{
+      saveTransferCall({body}).then(res=>{
         console.log('saveTransferCall success',body)
-		this.pbxCallId = null
       })
       .catch(err=>{
         console.log('saveTransferCall err',err)
@@ -520,5 +510,9 @@ export default class App extends LightningElement {
     }).catch(()=>{
       console.log('errr')
     });
+  }
+
+  @api handleActiveTab(event){
+    this.activeTab = event.detail
   }
 }

@@ -28,6 +28,8 @@ export default class Tabs extends LightningElement {
     handleTabClick(event) {
       const tabId = event.currentTarget.dataset.tabId
       this.handleShowTab(tabId)
+      const newEvent = new CustomEvent("active",{detail:tabId})
+      this.dispatchEvent(newEvent)
     }
     
     @api

@@ -4,6 +4,7 @@ import getListAgentStatus from '@salesforce/apex/MBFPhoneController.getListAgent
 
 export default class ManagementCall extends LightningElement {
     @api device
+    @api activeTab
     @track loading= false
     listAgentByRegion=[]
 
@@ -36,7 +37,12 @@ export default class ManagementCall extends LightningElement {
                         agentIds.push(agentId)
                     }
                 }
-                
+
+                if(agentIds.length === 0 ){
+                    this.listAgentByRegion = []
+                    return
+                }
+
                 await getListAgentStatus({body:JSON.stringify({agentIds})}).then(data=>{
                     if(Array.isArray(data.responseData)){
                         convertListAgentStatus = data.responseData.reduce((acc,agent)=>{
@@ -74,7 +80,9 @@ export default class ManagementCall extends LightningElement {
 
       startGetAgentByRegionInterval(){
         return setInterval(() => {
-            this.getList()  
+            if(this.activeTab ==='whisper'){
+                this.getList()  
+            }
         }, 10000);
       }
 

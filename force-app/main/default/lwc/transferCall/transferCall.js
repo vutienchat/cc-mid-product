@@ -39,7 +39,10 @@ export default class TransferCall extends LightningElement {
                   },{})
                 }
               })
-
+              if(agentIds.length === 0 ){
+                this.users = []
+                return
+              }
               await getListAgentStatus({body:JSON.stringify({agentIds})}).then(data=>{
                 if(Array.isArray(data.responseData)){
                   convertListAgentStatus = data.responseData.reduce((acc,agent)=>{

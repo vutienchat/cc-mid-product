@@ -44,12 +44,12 @@
               </div>
             </lightning-layout-item>
             <lightning-layout-item class={getClass}>
-                <c-tabs>
+                <c-tabs onactive={handleActiveTab}>
                     <c-custom-tab  icon-name='standard:metrics' label='Thống kê' value='statistics'>
                       <c-call-statistics agent-id={user.agentId} is-enable-click-to-dial={isEnableClickToDial}></c-call-statistics>
                     </c-custom-tab>
                     <c-custom-tab  icon-name='standard:voice_call' label='Hàng đợi' value='queueList'>
-                      <c-queue-list agent-id={user.agentId}></c-queue-list>
+                      <c-queue-list agent-id={user.agentId} active-tab={activeTab}></c-queue-list>
                     </c-custom-tab>
                     <template if:true={showTabInfo}>
                       <c-custom-tab label="Thông tin" icon-name="standard:portal_roles" value="personalInfo">
@@ -58,7 +58,7 @@
                     </template>
                     <template if:true={isServicesManager}>
                       <c-custom-tab label="Quản lý" icon-name="standard:log_a_call" value="whisper">
-                        <c-management-call device={device} onsupervisormakecall={handleSupervisorMakeCall}></c-management-call>
+                        <c-management-call device={device} onsupervisormakecall={handleSupervisorMakeCall} active-tab={activeTab}></c-management-call>
                       </c-custom-tab>
                     </template>
                 </c-tabs>

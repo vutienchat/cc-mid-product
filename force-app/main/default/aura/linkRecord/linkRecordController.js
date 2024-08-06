@@ -10,9 +10,9 @@
             var state = response.getState();        
             if (state === "SUCCESS"){
                 var result = response.getReturnValue();	
-                console.log('result.Call_ID__c cc',result.Call_ID__c)
+                console.log('result.Linkage_Id__c',result.Linkage_Id__c)
                  component.set('v.value', true);
-                 component.set('v.callId', result.Call_ID__c);
+                 component.set('v.callId', result.Linkage_Id__c);
                 }else if (state === "INCOMPLETE"){
                     component.set("v.isSpinner", false);
                 }else if (state === "ERROR"){

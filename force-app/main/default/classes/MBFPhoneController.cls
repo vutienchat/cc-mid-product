@@ -137,7 +137,7 @@ public with sharing class MBFPhoneController {
                 newTask.WhatId = newCase.Id;
                 newTask.Agent__c = agentInfo.Id;
                 newTask.Phone__c = Phone;
-                newTask.Call_ID__c = callId;
+                newTask.Linkage_Id__c = callId;
                 newTask.ActivityDate = date.today();
                 newTask.Status = 'Completed';
                 newTask.Reason__c = 'Call In';
@@ -177,7 +177,7 @@ public with sharing class MBFPhoneController {
             resultAPI = (ResponseMiddleware) System.JSON.deserialize(response.getBody(),ResponseMiddleware.class);
             if(resultAPI.responseData.content.size() > 0){
                 List<ContentData> newContents= new List<ContentData>();
-                String regexPattern = '^(0|\\+84)';
+                String regexPattern = '^(0084|\\+84|0)';
                 for(ContentData item  : resultAPI.responseData.content) {
                     String phoneNumber = item.phoneNumber.replaceFirst(regexPattern, '');
                     List<Contact> contacts = [SELECT Name FROM Contact WHERE Phone =: phoneNumber LIMIT 1];
@@ -356,7 +356,7 @@ public with sharing class MBFPhoneController {
     public static wrapperGetWallboardReport getWallboardReport(string fromTime, string toTime) {
         User u = [SELECT id, Id_agent_Using__c from user where Id =: UserInfo.getUserId()];
         
-        Master_Data__c m = [SELECT id, Partner__c,Management_Unit__c from Master_Data__c where Id =: u.Id_agent_Using__c];
+        Master_Data__c m = [SELECT id,Management_Unit__c,Partner__c from Master_Data__c where Id =: u.Id_agent_Using__c];
         String endpoint = Soft_Phone__c.getInstance('endpoint_middleware').Value__c;
         endpoint = endpoint + 'report/getWallboardReport' + '?fromTime=' + fromTime + '&toTime=' + toTime + '&teamName=' + m.Management_Unit__c + '&groupName=' + m.Partner__c;
         String authorizationHeader = getAuthorizationHeader();
@@ -419,12 +419,12 @@ public with sharing class MBFPhoneController {
     }
 
     @AuraEnabled
-    public static void updateTask(String taskId, String pbxCallId) {
+    public static void updateTask(String taskId, String linkAge) {
         try {
             Task oriTask = [SELECT id, Agent__r.Agent_Id__c
                             FROM Task 
                             WHERE id= :taskId];
-            oriTask.Call_ID__c = pbxCallId;
+            oriTask.Linkage_Id__c = linkAge;
             update oriTask;
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
@@ -474,10 +474,10 @@ public with sharing class MBFPhoneController {
        @AuraEnabled public string svRatio;
        @AuraEnabled public string svRatio60;
        @AuraEnabled public string managementUnit;
+       @AuraEnabled public string partner;
        @AuraEnabled public string tranDi;
        @AuraEnabled public string nhanTran;
        @AuraEnabled public string totalDtvCurrent;
-       @AuraEnabled public string partner;
     }
     
     public class ResponseMiddleware{
